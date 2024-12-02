@@ -1,12 +1,15 @@
 WARNING: Mac address to reach destination not found. Using broadcast.
 WARNING: Mac address to reach destination not found. Using broadcast.
-modal_type:geo, frequency:1, source_host:164, destination_host:175
+WARNING: more Mac address to reach destination not found. Using broadcast.
+modal_type:mf, frequency:1, source_host:180, destination_host:170
 ###[ Ethernet ]### 
   dst       = ff:ff:ff:ff:ff:ff
   src       = 00:00:00:00:00:00
-  type      = 0x8947
+  type      = 0x27c0
 ###[ Raw ]### 
-     load      = '\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0c@M\\xcc\\xcc\x00\x00\x00\x00\x00\x00\x00\x00'
+     load      = '\x00\x00\x00\x01\x00\x00\x00u\x00\x00\x00k'
 
-sending on interface h164-eth0 form 164 to 175, model : geo 
-['geo', '164', '175'] 60 ['geo', '164', '175'] 60
+sending on interface h180-eth0 form 180 to 170, model : mf 
+['id', '180', '170'] 65 ['mf', '180', '170'] 66
+mf 180 170 mf 180 170
+resend!
