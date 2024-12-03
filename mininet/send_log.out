@@ -1,10 +1,11 @@
 WARNING: Mac address to reach destination not found. Using broadcast.
 WARNING: Mac address to reach destination not found. Using broadcast.
-modal_type:ipv4, frequency:1, source_host:175, destination_host:170
-generate_ip_pkt 175 170
+WARNING: more Mac address to reach destination not found. Using broadcast.
+modal_type:ipv4, frequency:1, source_host:185, destination_host:174
+generate_ip_pkt 185 174
 ###[ Ethernet ]### 
   dst       = ff:ff:ff:ff:ff:ff
-  src       = 00:00:00:00:02:4b
+  src       = 00:00:00:00:02:55
   type      = IPv4
 ###[ IP ]### 
      version   = 4
@@ -16,9 +17,9 @@ generate_ip_pkt 175 170
      frag      = 0
      ttl       = 64
      proto     = tcp
-     chksum    = 0x1e7e
-     src       = 172.20.2.23
-     dst       = 172.20.2.18
+     chksum    = 0x1e70
+     src       = 172.20.2.33
+     dst       = 172.20.2.22
      \options   \
 ###[ TCP ]### 
         sport     = 49152
@@ -29,9 +30,11 @@ generate_ip_pkt 175 170
         reserved  = 0
         flags     = S
         window    = 8192
-        chksum    = 0x6ebe
+        chksum    = 0x6eb0
         urgptr    = 0
         options   = ''
 
-sending on interface h175-eth0 form 175 to 170, model : ipv4 
-['ipv4', '175', '170'] 73 ['ipv4', '175', '170'] 73
+sending on interface h185-eth0 form 185 to 174, model : ipv4 
+['ndn', '185', '174'] 85 ['ipv4', '185', '174'] 86
+ipv4 185 174 ipv4 185 174
+resend!
