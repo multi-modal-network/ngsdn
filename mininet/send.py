@@ -312,7 +312,7 @@ def main():
         pkt = generate_mf_pkt(mf_ethertype, source_host, destination_host)
     elif modal_type == "ndn":
         pkt = generate_ndn_pkt(ndn_ethertype, source_host, destination_host)
-    elif modal_type == "ip":
+    elif modal_type == "ipv4":
         pkt = generate_ip_pkt(ip_ethertype, source_host, destination_host)
     elif modal_type == "flexip":
         pkt = generate_flexip_pkt(flexip_ethertype, source_host, destination_host)
