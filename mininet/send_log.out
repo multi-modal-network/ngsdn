@@ -1,40 +1,15 @@
 WARNING: Mac address to reach destination not found. Using broadcast.
 WARNING: Mac address to reach destination not found. Using broadcast.
 WARNING: more Mac address to reach destination not found. Using broadcast.
-modal_type:ipv4, frequency:1, source_host:185, destination_host:174
-generate_ip_pkt 185 174
+modal_type:mf, frequency:1, source_host:184, destination_host:180
 ###[ Ethernet ]### 
   dst       = ff:ff:ff:ff:ff:ff
-  src       = 00:00:00:00:02:55
-  type      = IPv4
-###[ IP ]### 
-     version   = 4
-     ihl       = 5
-     tos       = 0x0
-     len       = 40
-     id        = 1
-     flags     = 
-     frag      = 0
-     ttl       = 64
-     proto     = tcp
-     chksum    = 0x1e70
-     src       = 172.20.2.33
-     dst       = 172.20.2.22
-     \options   \
-###[ TCP ]### 
-        sport     = 49152
-        dport     = 1234
-        seq       = 0
-        ack       = 0
-        dataofs   = 5
-        reserved  = 0
-        flags     = S
-        window    = 8192
-        chksum    = 0x6eb0
-        urgptr    = 0
-        options   = ''
+  src       = 00:00:00:00:00:00
+  type      = 0x27c0
+###[ Raw ]### 
+     load      = '\x00\x00\x00\x01\x00\x00\x00y\x00\x00\x00u'
 
-sending on interface h185-eth0 form 185 to 174, model : ipv4 
-['ndn', '185', '174'] 85 ['ipv4', '185', '174'] 86
-ipv4 185 174 ipv4 185 174
+sending on interface h184-eth0 form 184 to 180, model : mf 
+['geo', '184', '180'] 98 ['mf', '184', '180'] 99
+mf 184 180 mf 184 180
 resend!
