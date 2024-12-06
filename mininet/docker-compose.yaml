@@ -61,6 +61,8 @@ services:
     networks:
       mininet-bridge:
         ipv4_address: 10.1.0.5
+    ports:
+      - "53000-53255:50000-50255"
     command: ["tail", "-f", "/dev/null"]
 
   mn-stratum4:
@@ -75,6 +77,8 @@ services:
     networks:
       mininet-bridge:
         ipv4_address: 10.1.0.6
+    ports:
+      - "54000-54255:50000-50255"
     command: ["tail", "-f", "/dev/null"]
   
   mn-stratum5:
@@ -89,6 +93,8 @@ services:
     networks:
       mininet-bridge:
         ipv4_address: 10.1.0.7
+    ports:
+      - "55000-55255:50000-50255"
     command: ["tail", "-f", "/dev/null"]
   
   mn-stratum6:
@@ -103,6 +109,8 @@ services:
     networks:
       mininet-bridge:
         ipv4_address: 10.1.0.8
+    ports:
+      - "56000-56255:50000-50255"
     command: ["tail", "-f", "/dev/null"]
   
   mn-stratum7:
@@ -117,6 +125,8 @@ services:
     networks:
       mininet-bridge:
         ipv4_address: 10.1.0.9
+    ports:
+      - "57000-57255:50000-50255"
     command: ["tail", "-f", "/dev/null"]
 
 networks:

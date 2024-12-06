@@ -188,7 +188,7 @@ class TutorialTopo(Topo):
         #domain1_group1_ovs1 = self.addSwitch('domain1_group1_ovs1')
         # IPv6 hosts attached to leaf 1
         for i in range(128, 256):
-            host = self.addHost('h{}'.format(vmx*100+i),
+            host = self.addHost('h{}'.format(vmx*255+i),
                                 cls=ONOSHost,
                                 mac="00:00:00:00:{:02x}:{:02x}".format((vmx + 1) & 0xFF, i & 0xFF),
                                 ip="172.20.{}.{}/16".format(vmx + 1, i - 64 + 12),
