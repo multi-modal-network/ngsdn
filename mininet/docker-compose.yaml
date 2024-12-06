@@ -1,0 +1,124 @@
+version: "3"
+
+services:
+  mn-stratum0:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum0
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/Desktop:/home/onos/Desktop
+    environment:
+      VMX: "0"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.2
+    ports:
+      - "50000-50255:50000-50255"
+    command: ["tail", "-f", "/dev/null"]
+  
+  mn-stratum1:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum1
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/Desktop:/home/onos/Desktop
+    environment:
+      VMX: "1"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.3
+    ports:
+      - "51000-51255:50000-50255"
+    command: ["tail", "-f", "/dev/null"]
+
+  mn-stratum2:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum2
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/Desktop:/home/onos/Desktop
+    environment:
+      VMX: "2"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.4
+    ports:
+      - "52000-52255:50000-50255"
+    command: ["tail", "-f", "/dev/null"]
+  
+  mn-stratum3:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum3
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/Desktop:/home/onos/Desktop
+    environment:
+      VMX: "3"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.5
+    command: ["tail", "-f", "/dev/null"]
+
+  mn-stratum4:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum4
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/Desktop:/home/onos/Desktop
+    environment:
+      VMX: "4"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.6
+    command: ["tail", "-f", "/dev/null"]
+  
+  mn-stratum5:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum5
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/Desktop:/home/onos/Desktop
+    environment:
+      VMX: "5"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.7
+    command: ["tail", "-f", "/dev/null"]
+  
+  mn-stratum6:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum6
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/Desktop:/home/onos/Desktop
+    environment:
+      VMX: "6"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.8
+    command: ["tail", "-f", "/dev/null"]
+  
+  mn-stratum7:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum7
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/Desktop:/home/onos/Desktop
+    environment:
+      VMX: "7"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.9
+    command: ["tail", "-f", "/dev/null"]
+
+networks:
+  mininet-bridge:
+    external: true

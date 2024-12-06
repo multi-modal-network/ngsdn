@@ -17,6 +17,7 @@ limitations under the License.
 """
 
 import argparse
+import os
 import stratum
 from stratum import StratumBmv2Switch
 from mininet.cli import CLI
@@ -33,7 +34,7 @@ from mininet.link import Intf
 import subprocess
 
 CPU_PORT = 255
-vmx = 1 #0-7代表虚拟机t1-t8
+vmx = int(os.getenv("VMX","0"))
 def ovs_service_start():
     try:
         subprocess.check_call(["service", "openvswitch-switch", "start"])
@@ -174,21 +175,19 @@ class TutorialTopo(Topo):
         switch_list.append('s1')
         ovs1 = self.addSwitch('ovs1')
         self.addLink(ovs1, s1)
-        for i in range(2, 101):
+        for i in range(2, 256):
             switch_name = 's{}'.format(i)
             switch = self.addSwitch(switch_name, cls=StratumBmv2Switch, cpuport=CPU_PORT)
             switch_list.append(switch_name)
 
-        for i in range(1, 50):
+        for i in range(1, 128):
             self.addLink(switch_list[i-1], switch_list[2 * i-1])
             self.addLink(switch_list[i-1], switch_list[2 * i])
-        self.addLink(switch_list[49], switch_list[99])
-
 
 
         #domain1_group1_ovs1 = self.addSwitch('domain1_group1_ovs1')
         # IPv6 hosts attached to leaf 1
-        for i in range(64, 101):
+        for i in range(128, 256):
             host = self.addHost('h{}'.format(vmx*100+i),
                                 cls=ONOSHost,
                                 mac="00:00:00:00:{:02x}:{:02x}".format((vmx + 1) & 0xFF, i & 0xFF),
