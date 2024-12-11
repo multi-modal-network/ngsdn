@@ -18,6 +18,8 @@ mf_ethertype = 0x27c0
 ndn_ethertype = 0x8624
 flexip_ethertype = 0x3690
 
+def getMacByVmx(vmx):
+    return f"02:42:0a:01:00:0{vmx+2}"
 
 # find the interface eth0
 def get_if():
@@ -80,16 +82,19 @@ def generate_geo_pkt(ethertype, source_host, destination_host):
 
 # generate id packet
 def hostToIDParam(parameter):
-    hostId = parameter - 64
-    vmx = math.floor(hostId / 100)
-    i = hostId % 100 + 64
+    vmx = math.floor(hostId / 255) 
+    i = hostId % 256
     return 202271720 + vmx * 100000 + i - 64
 
 
-def generate_id_pkt(ethertype, source_host, destination_host):  # 从主机信息中提取参数信息
-    srcIdentity = hostToIDParam(source_host)
-    dstIdentity = hostToIDParam(destination_host)
-    pkt = Ether(type=ethertype)
+def generate_id_pkt(ethertype, srcHost, dstHost):  # 从主机信息中提取参数信息
+    srcVmx = math.floor(srcHost / 255)
+    srcId = (srcHost - 1) % 255 + 1
+    dstVmx = math.floor(dstHost / 255)
+    dstId = (dstHost - 1) % 255 + 1
+    srcIdentity = 202271720 + srcVmx * 100000 + srcId - 64
+    dstIdentity = 202271720 + dstVmx * 100000 + dstId - 64
+    pkt = Ether(type=ethertype, src=getMacByVmx(srcVmx), dst=getMacByVmx(dstVmx))
     pkt = pkt / Raw(load=struct.pack("!LL", srcIdentity, dstIdentity))
     pkt.show2()
     return pkt

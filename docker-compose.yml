@@ -28,4 +28,4 @@ services:
       - ./tmp/onos:/root/onos/apache-karaf-4.2.8/data/tmp
       - /home/onos/Desktop/:/home/onos/Desktop
     environment:
-      - ONOS_APPS=gui2,drivers.bmv2,lldpprovider,hostprovider
+      - ONOS_APPS=gui2,drivers.bmv2
