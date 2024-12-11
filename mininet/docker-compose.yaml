@@ -13,6 +13,8 @@ services:
     networks:
       mininet-bridge:
         ipv4_address: 10.1.0.2
+      ovs-bridge:
+        ipv4_address: 10.2.0.2
     ports:
       - "50000-50255:50000-50255"
     command: ["tail", "-f", "/dev/null"]
@@ -29,6 +31,8 @@ services:
     networks:
       mininet-bridge:
         ipv4_address: 10.1.0.3
+      ovs-bridge:
+        ipv4_address: 10.2.0.3
     ports:
       - "51000-51255:50000-50255"
     command: ["tail", "-f", "/dev/null"]
@@ -45,6 +49,8 @@ services:
     networks:
       mininet-bridge:
         ipv4_address: 10.1.0.4
+      ovs-bridge:
+        ipv4_address: 10.2.0.4
     ports:
       - "52000-52255:50000-50255"
     command: ["tail", "-f", "/dev/null"]
@@ -61,6 +67,8 @@ services:
   #   networks:
   #     mininet-bridge:
   #       ipv4_address: 10.1.0.5
+  #     ovs-bridge:
+  #       ipv4_address: 10.2.0.5
   #   ports:
   #     - "53000-53255:50000-50255"
   #   command: ["tail", "-f", "/dev/null"]
@@ -77,6 +85,8 @@ services:
   #   networks:
   #     mininet-bridge:
   #       ipv4_address: 10.1.0.6
+  #     ovs-bridge:
+  #       ipv4_address: 10.2.0.6
   #   ports:
   #     - "54000-54255:50000-50255"
   #   command: ["tail", "-f", "/dev/null"]
@@ -93,6 +103,8 @@ services:
   #   networks:
   #     mininet-bridge:
   #       ipv4_address: 10.1.0.7
+  #     ovs-bridge:
+  #       ipv4_address: 10.2.0.7
   #   ports:
   #     - "55000-55255:50000-50255"
   #   command: ["tail", "-f", "/dev/null"]
@@ -109,6 +121,8 @@ services:
   #   networks:
   #     mininet-bridge:
   #       ipv4_address: 10.1.0.8
+  #     ovs-bridge:
+  #       ipv4_address: 10.2.0.8
   #   ports:
   #     - "56000-56255:50000-50255"
   #   command: ["tail", "-f", "/dev/null"]
@@ -125,10 +139,14 @@ services:
   #   networks:
   #     mininet-bridge:
   #       ipv4_address: 10.1.0.9
+  #     ovs-bridge:
+  #       ipv4_address: 10.2.0.9
   #   ports:
   #     - "57000-57255:50000-50255"
   #   command: ["tail", "-f", "/dev/null"]
 
 networks:
   mininet-bridge:
+    external: true
+  ovs-bridge:
     external: true

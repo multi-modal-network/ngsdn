@@ -43,6 +43,22 @@ def ovs_service_start():
         print("An error occurred while trying to execute the command: {}".format(e))
     except Exception as e:
         print("An unexpected error occurred: {}".format(e))
+def addOVSPort(bridge, port, flow):
+    try:
+        subprocess.check_call(["ovs-vsctl", "add-port", bridge, port])
+        print("Port added successfully")
+    except subprocess.CalledProcessError as e:
+        print("An error occurred while trying to execute the command: {}".format(e))
+    except Exception as e:
+        print("An unexpected error occurred: {}".format(e))
+def applyOVSFlow(bridge, flow):
+    try:
+        subprocess.check_call(["ovs-ofctl", "add-flow", bridge] + flow.split(","))
+        print("Flow applied sucessfully")
+    except subprocess.CalledProcessError as e:
+        print("An error occurred while trying to execute the command: {}".format(e))
+    except Exception as e:
+        print("An unexpected error occurred: {}".format(e))
 def float_to_custom_bin(number):
     # 确定符号位并取绝对值
     if number < 0:
@@ -221,6 +237,11 @@ def main():
     net = Mininet(topo=TutorialTopo(), controller=None)
     #c0 = net.addController(name='c0', controller=RemoteController, ip='192.168.2.139', port=6653)
     net.start()
+
+    # 添加ovs
+    addOVSPort('ovs1', 'eth1', 'ovs1-eth')
+    applyOVSFlow('ovs1', 'in_port=1,actions=output:2')
+    applyOVSFlow('ovs1', 'in_port=2,actions=output:1')
 
     #add_port_to_ovs('domain1_group1_veth1', 'domain1_group1_ovs1')
 

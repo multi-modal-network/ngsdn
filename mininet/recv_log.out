@@ -1,1 +1,13 @@
 sniffing on h400-eth0
+got an ID packet
+###[ Ethernet ]### 
+  dst       = 02:42:0a:01:00:03
+  src       = 02:42:0a:01:00:02
+  type      = 0x812
+###[ Raw ]### 
+     load      = '\x0c\x0elp\x0c\x0f\\xf2\\xd9'
+
+------------------------------------
+
+
+
