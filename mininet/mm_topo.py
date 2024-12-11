@@ -43,7 +43,7 @@ def ovs_service_start():
         print("An error occurred while trying to execute the command: {}".format(e))
     except Exception as e:
         print("An unexpected error occurred: {}".format(e))
-def addOVSPort(bridge, port, flow):
+def addOVSPort(bridge, port):
     try:
         subprocess.check_call(["ovs-vsctl", "add-port", bridge, port])
         print("Port added successfully")
@@ -239,9 +239,9 @@ def main():
     net.start()
 
     # 添加ovs
-    addOVSPort('ovs1', 'eth1', 'ovs1-eth')
-    applyOVSFlow('ovs1', 'in_port=1,actions=output:2')
-    applyOVSFlow('ovs1', 'in_port=2,actions=output:1')
+    # addOVSPort('ovs1', 'eth1', 'ovs1-eth')
+    # applyOVSFlow('ovs1', 'in_port=1,actions=output:2')
+    # applyOVSFlow('ovs1', 'in_port=2,actions=output:1')
 
     #add_port_to_ovs('domain1_group1_veth1', 'domain1_group1_ovs1')
 
