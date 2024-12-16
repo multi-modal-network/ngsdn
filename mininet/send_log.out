@@ -1,10 +1,15 @@
-modal_type:id, frequency:1, source_host:200, destination_host:400
+modal_type:geo, frequency:1, source_host:200, destination_host:400
+generate_geo_pkt 0 200 1 145
+000000001111111
+1077923020
 ###[ Ethernet ]### 
   dst       = 02:42:0a:01:00:03
   src       = 02:42:0a:01:00:02
-  type      = 0x812
+  type      = 0x8947
 ###[ Raw ]### 
-     load      = '\x0c\x0elp\x0c\x0f\\xf2\\xd9'
+     load      = '\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00R@?\\xcc\\xcc\x00\x00\x00\x00\x00\x00\x00\x00'
 
-sending on interface h200-eth0 form 200 to 400, model : id 
-['id', '200', '400'] 136 ['id', '200', '400'] 136
+sending on interface h200-eth0 form 200 to 400, model : geo 
+['id', '200', '400'] 136 ['geo', '200', '400'] 137
+geo 200 400 geo 200 400
+resend!

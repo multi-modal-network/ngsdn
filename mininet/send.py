@@ -63,15 +63,14 @@ def float_to_custom_bin(number):
 
 
 # generate geo packet
-def generate_geo_pkt(ethertype, source_host, destination_host):
-    hostId = destination_host - 64
-    vmx = math.floor(hostId / 100)
-    i = hostId % 100 + 64
-    geoAreaPosLat = i - 63
-    geoAreaPosLon = float_to_custom_bin(-180 + vmx * 20 + (i - 64) * 0.4)
+def generate_geo_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
+    print("generate_geo_pkt", srcVmx, srcId, dstVmx, dstId)
+    geoAreaPosLat = dstId - 63
+    geoAreaPosLon = float_to_custom_bin(-180 + dstVmx * 20 + (dstId - 64) * 0.4)
     disa = 0
     disb = 0
-    pkt = Ether(type=ethertype)
+    print(geoAreaPosLon)
+    pkt = Ether(type=ethertype, src=getMacByVmx(srcVmx), dst=getMacByVmx(dstVmx))
     pkt = pkt / Raw(
         load=struct.pack("!LLLLLLLLLLLLLL", 0x00000000, 0x00400000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
                          0x00000000, 0x00000000, 0x00000000, 0x00000000, geoAreaPosLat, geoAreaPosLon,
@@ -81,17 +80,8 @@ def generate_geo_pkt(ethertype, source_host, destination_host):
 
 
 # generate id packet
-def hostToIDParam(parameter):
-    vmx = math.floor(hostId / 255) 
-    i = hostId % 256
-    return 202271720 + vmx * 100000 + i - 64
-
-
-def generate_id_pkt(ethertype, srcHost, dstHost):  # 从主机信息中提取参数信息
-    srcVmx = math.floor(srcHost / 255)
-    srcId = (srcHost - 1) % 255 + 1
-    dstVmx = math.floor(dstHost / 255)
-    dstId = (dstHost - 1) % 255 + 1
+def generate_id_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):  # 从主机信息中提取参数信息
+    print("generate_id_pkt", srcVmx, srcId, dstVmx, dstId)
     srcIdentity = 202271720 + srcVmx * 100000 + srcId - 64
     dstIdentity = 202271720 + dstVmx * 100000 + dstId - 64
     pkt = Ether(type=ethertype, src=getMacByVmx(srcVmx), dst=getMacByVmx(dstVmx))
@@ -101,39 +91,24 @@ def generate_id_pkt(ethertype, srcHost, dstHost):  # 从主机信息中提取参
 
 
 # generate mf packet
-def hostToMFParam(parameter):
-    hostId = parameter - 64
-    vmx = math.floor(hostId / 100)
-    i = hostId % 100 + 64
-    return 1 + vmx * 100 + i - 64
-
-
-def generate_mf_pkt(ethertype, source_host, destination_host):
-    srcIdentity = hostToMFParam(source_host)
-    dstIdentity = hostToMFParam(destination_host)
-    pkt = Ether(type=ethertype)
-    pkt = pkt / Raw(load=struct.pack("!LLL", 0x0000001, srcIdentity, dstIdentity))
+def generate_mf_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
+    print("generate_mf_pkt", srcVmx, srcId, dstVmx, dstId)
+    srcMF = 1 + srcVmx * 1000 + srcId - 64
+    dstMF = 1 + dstVmx * 1000 + dstId - 64
+    pkt = Ether(type=ethertype, src=getMacByVmx(srcVmx), dst=getMacByVmx(dstVmx))
+    pkt = pkt / Raw(load=struct.pack("!LLL", 0x0000001, srcMF, dstMF))
     pkt.show2()
     return pkt
 
 
 # generate ndn packet
-def hostToNDNParam(parameter):
-    hostId = parameter - 64
-    vmx = math.floor(hostId / 100)
-    i = hostId % 100 + 64
-    return 202271720 + vmx * 100000 + i - 64
-
-
-def generate_ndn_pkt(ethertype, source_host, destination_host):
-    hostId = source_host - 64  # 取参数1
-    vmx = math.floor(hostId / 100)
-    i = hostId % 100 + 64
-    name_component_src = hostToNDNParam(source_host)
-    name_component_dst = hostToNDNParam(destination_host)
-    content = 2048 + vmx * 100 + i - 64
+def generate_ndn_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
+    print("generate_ndn_pkt", srcVmx, srcId, dstVmx, dstId)
+    name_component_src = 202271720 + srcVmx * 100000 + srcId - 64
+    name_component_dst = 202271720 + dstVmx * 100000 + dstId - 64
+    content = 2048 + srcVmx * 1000 + srcId - 64
     print(name_component_dst, content)
-    pkt = Ether(type=ethertype)
+    pkt = Ether(type=ethertype, src=getMacByVmx(srcVmx), dst=getMacByVmx(dstVmx))
     pkt = pkt / Raw(load=struct.pack("!LLLLLLLLL", 0x6fd0020, 0x80c0804, name_component_src,
                                      0x08840000 | ((name_component_dst >> 16) & 0xffff)
                                      , (((name_component_dst & 0xffff)) << 16) | 0x1e00, 0x18020000, 0x19020000,0x1b020000,0x1a020000 | content))
@@ -149,12 +124,11 @@ def hostToIPParam(parameter):
     return "172.20.{}.{}".format(vmx + 1, i - 64 + 12)  # ip与拓扑中的一致
 
 
-def generate_ip_pkt(ethertype, source_host, destination_host):
-    print("generate_ip_pkt", source_host, destination_host)
-    srcIp = hostToIPParam(source_host)
-    dstIp = hostToIPParam(destination_host)
-    pkt = Ether(type=ethertype) / IP(src=srcIp, dst=dstIp) / TCP(dport=1234,sport=49152)
-    # pkt = pkt / Raw(load=struct.pack("!LL", srcIp, dstIp))
+def generate_ip_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
+    print("generate_ip_pkt", srcVmx, srcId, dstVmx, dstId)
+    srcIP = "172.20.{}.{}".format(srcVmx + 1, srcId - 64 + 12)
+    dstIP = "172.20.{}.{}".format(dstVmx + 1, dstId - 64 + 12)
+    pkt = Ether(type=ethertype, src=getMacByVmx(srcVmx), dst=getMacByVmx(dstVmx)) / IP(src=srcIP, dst=dstIP) / TCP(dport=1234,sport=49152)
     pkt.show2()
     return pkt
 
@@ -307,18 +281,22 @@ def main():
     #     file.write(message)
     # time.sleep(0.8)
 
-    # 生成数据包
+    srcVmx = math.floor(source_host / 255)
+    srcId = (source_host - 1) % 255 + 1
+    dstVmx = math.floor(destination_host / 255)
+    dstId = (destination_host - 1) % 255 + 1
 
+    # 生成数据包
     if modal_type == "geo":
-        pkt = generate_geo_pkt(geo_ethertype, source_host, destination_host)
+        pkt = generate_geo_pkt(geo_ethertype, srcVmx, srcId, dstVmx, dstId)
     elif modal_type == "id":
-        pkt = generate_id_pkt(id_ethertype, source_host, destination_host)
+        pkt = generate_id_pkt(id_ethertype, srcVmx, srcId, dstVmx, dstId)
     elif modal_type == "mf":
-        pkt = generate_mf_pkt(mf_ethertype, source_host, destination_host)
+        pkt = generate_mf_pkt(mf_ethertype, srcVmx, srcId, dstVmx, dstId)
     elif modal_type == "ndn":
-        pkt = generate_ndn_pkt(ndn_ethertype, source_host, destination_host)
+        pkt = generate_ndn_pkt(ndn_ethertype, srcVmx, srcId, dstVmx, dstId)
     elif modal_type == "ipv4":
-        pkt = generate_ip_pkt(ip_ethertype, source_host, destination_host)
+        pkt = generate_ip_pkt(ip_ethertype, srcVmx, srcId, dstVmx, dstId)
     elif modal_type == "flexip":
         pkt = generate_flexip_pkt(flexip_ethertype, source_host, destination_host)
     else:

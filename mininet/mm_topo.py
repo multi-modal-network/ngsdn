@@ -209,13 +209,13 @@ class TutorialTopo(Topo):
                                 mac="00:00:00:00:{:02x}:{:02x}".format((vmx + 1) & 0xFF, i & 0xFF),
                                 ip="172.20.{}.{}/16".format(vmx + 1, i - 64 + 12),
                                 identity=202271720 + vmx * 100000 + i - 64,
-                                mf_guid=1 + vmx * 100 + i - 64,
+                                mf_guid=1 + vmx * 1000 + i - 64,
                                 geoPosLat=i - 63,
                                 geoPosLon=float_to_custom_bin(-180 + vmx * 20 + (i - 64) * 0.4),
                                 disa=0,
                                 disb=0,
                                 ndn_name=202271720 + vmx * 100000 + i - 64,
-                                ndn_content=2048 + vmx * 100 + i - 64,
+                                ndn_content=2048 + vmx * 1000 + i - 64,
                                 flexip=customFlexIP(vmx, i),
                                 defautRoute =None, vlan="-1")
             self.addLink(host, switch_list[i - 1])
