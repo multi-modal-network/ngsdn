@@ -29,14 +29,15 @@ typedef bit<128> ipv6_addr_t;
 typedef bit<12> vlan_id_t;
 
 typedef bit<16> ether_type_t;
-const ether_type_t ETHERTYPE_IPV4 = 16w0x0800;
-const ether_type_t ETHERTYPE_ARP = 16w0x0806;
 const ether_type_t ETHERTYPE_IPV6 = 16w0x86dd;
-const ether_type_t ETHERTYPE_VLAN = 16w0x8100;
+const ether_type_t ETHERTYPE_IPV4 = 16w0x0800;
+const ether_type_t ETHERTYPE_ID = 16w0x0812;
 const ether_type_t ETHERTYPE_GEO = 16w0x8947;
 const ether_type_t ETHERTYPE_MF = 16w0x27c0;
 const ether_type_t ETHERTYPE_NDN = 16w0x8624;
-const ether_type_t ETHERTYPE_ID = 16w0x0812;
+const ether_type_t ETHERTYPE_FLEXIP = 16w0x3690;
+const ether_type_t ETHERTYPE_ARP = 16w0x0806;
+const ether_type_t ETHERTYPE_VLAN = 16w0x8100;
 
 typedef bit<8> ip_protocol_t;
 const ip_protocol_t IP_PROTOCOLS_ICMP = 1;
@@ -93,6 +94,16 @@ header ipv6_h {
     bit<8> hop_limit;
     ipv6_addr_t src_addr;
     ipv6_addr_t dst_addr;
+}
+
+header flexip_t {
+    bit<4>    version;
+    bit<2>    srcFormat;
+    bit<2>    dstFormat;
+    bit<12>   srcLength;
+    bit<12>   dstLength;
+    bit<384>  srcAddr;
+    bit<384>  dstAddr;
 }
 
 header tcp_h {
@@ -217,10 +228,22 @@ header id_t {
     bit<32> dstIdentity;
 }
 
-header mf_guid_t{
+header mf_t{
     bit<32> mf_type;
 	bit<32> src_guid;
     bit<32> dest_guid;
+}
+
+@controller_header("packet_in")
+header packet_in_t {
+    bit<9> ingress_port;
+    bit<7> pad0;
+}
+
+@controller_header("packet_out")
+header packet_out_t {
+    bit<9> egress_port;
+    bit<7> pad0;
 }
 
 header ndp_t {
@@ -301,21 +324,31 @@ struct ndn_t {
     content_tlv_t content_tlv;
 }
 
-struct header_t {
-    ethernet_h ethernet;
-    vlan_tag_h vlan_tag;
-    ipv4_h ipv4;
-    ipv6_h ipv6;
-    tcp_h tcp;
-    udp_h udp;
-    geo_t geo;
-    gbc_t gbc;
-    beacon_t beacon;
-    id_t id;
-    mf_guid_t mf_guid;
-    ndn_t ndn;
-    // Add more headers here.
+struct headers_t {
+    packet_out_t  packet_out;
+    packet_in_t   packet_in;
+    ethernet_t    ethernet;
+    ipv6_t        ipv6;
+    ipv4_t        ipv4;
+    flexip_t      flexip;
+    id_t          id;
+    mf_t          mf;
+    geo_t         geo;
+    gbc_t         gbc;
+    beacon_t      beacon;
+    ndn_t         ndn;
+    tcp_t         tcp;
+    udp_t         udp;
+    icmpv6_t      icmpv6;
+    ndp_t         ndp;
 }
+
+struct metadata_t {
+    bit<1>   l3;    // Set if routed
+    bit<1>   ndn;    // Set if routed
+    bit<8>   name_tlv_length;
+}
+
 
 struct empty_header_t {}
 
