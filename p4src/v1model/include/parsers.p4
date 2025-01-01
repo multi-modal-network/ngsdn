@@ -53,6 +53,7 @@ parser parser_impl(packet_in packet,
 
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
+        local_metadata.l4_dscp = hdr.ipv4.diffserv / 4;
         transition select(hdr.ipv4.protocol) {
             IP_PROTO_TCP: parse_tcp;
             IP_PROTO_UDP: parse_udp;
@@ -152,13 +153,25 @@ parser parser_impl(packet_in packet,
         packet.extract(hdr.tcp);
         local_metadata.l4_src_port = hdr.tcp.src_port;
         local_metadata.l4_dst_port = hdr.tcp.dst_port;
-        transition accept;
+        transition select(local_metadata.dscp) {
+            IPv4_DSCP_INT: parse_int;
+            default: accept;
+        };
     }
 
     state parse_udp {
         packet.extract(hdr.udp);
         local_metadata.l4_src_port = hdr.udp.src_port;
         local_metadata.l4_dst_port = hdr.udp.dst_port;
+        transition select(local_metadata.dscp, hdr.udp.dstPort){
+            (6w0x20 &&& 6w0x3f, 16w0x0 &&& 16w0x0): parse_int;
+            default: accept;
+        }
+    }
+
+    state parse_int {
+        packet.extract(hdr.int_shim);
+        pakcet.extract(hdr.int_header);
         transition accept;
     }
 }
@@ -166,6 +179,13 @@ parser parser_impl(packet_in packet,
 control deparser(packet_out packet, in headers_t hdr) {
     apply {
         packet.emit(hdr.packet_in);
+
+        // report headers
+        packet.emit(hdr.report_ethernet);
+        packet.emit(hdr.report_ipv4);
+        packet.emit(hdr.report_udp);
+        packet.emit(hdr.report_fixed_header);
+
         packet.emit(hdr.ethernet);
         packet.emit(hdr.ndn);
 	    packet.emit(hdr.mf);
@@ -180,6 +200,20 @@ control deparser(packet_out packet, in headers_t hdr) {
         packet.emit(hdr.udp);
         packet.emit(hdr.icmpv6);
         packet.emit(hdr.ndp);
+
+        // int headers
+        packet.emit(hdr.int_shim);
+        packet.emit(hdr.int_header);
+
+        // local INT node metadata
+        packet.emit(hdr.int_switch_id);
+        packet.emit(hdr.int_level1_port_ids);
+        packet.emit(hdr.int_hop_latency);
+        packet.emit(hdr.int_q_occupancy);
+        packet.emit(hdr.int_ingress_tstamp);
+        packet.emit(hdr.int_egress_tstamp);
+        packet.emit(hdr.int_level2_port_ids);
+        packet.emit(hdr.int_egress_port_tx_util);
     }
 }
 

@@ -235,6 +235,109 @@ header id_t {
     bit<32> dstIdentity;
 }
 
+
+// ---------------- int ----------------
+const bit<6> IPv4_DSCP_INT = 0x20;  // indicates an INT header in the packet
+const bit<8> INT_TYPE_HOP_BY_HOP = 1;   // HOP_BY_HOP的INT类型是1
+// int填充垫片
+const bit<16> INT_SHIM_HEADER_LEN_BYTES = 4;
+header int_shim_t {
+    bit<8> int_type;
+    bit<8> rsvd1;
+    bit<8> len;         // int首部的长度（四字节为单位）
+    bit<6> dscp;        // ipv4的dscp字段
+    bit<2> rsvd3;
+}
+
+// int首部
+const bit<16> INT_HEADER_LEN_BYTES = 8;
+header int_header_t {
+    bit<4> ver;
+    bit<2> rep;
+    bit<1> c;
+    bit<1> e;
+    bit<1> m;
+    bit<7>  rsvd1;
+    bit<3>  rsvd2;
+    bit<5>  hop_metadata_len;   // 单个INT节点添加的元数据长度（4字节为单位）
+    bit<8>  remaining_hop_cnt;  // 还可以添加int元数据的交换机个数
+    bit<16> instruction_mask;   // instruction的bitmap
+    bit<16> seq;  // rsvd3 - custom implementation of a sequence number
+}
+
+const bit<16> INT_ALL_HEADER_LEN_BYTES = INT_SHIM_HEADER_LEN_BYTES + INT_HEADER_LEN_BYTES
+
+header int_switch_id_t {
+    bit<32> switch_id;
+}
+
+header int_level1_port_ids_t {
+    bit<16> ingress_port_id;
+    bit<16> egress_port_id;
+}
+
+header int_hop_latency_t {
+    bit<32> hop_latency;
+}
+
+header int_q_occupancy_t {
+    bit<8> q_id;
+    bit<24> q_occupancy;
+}
+
+header int_ingress_tstamp_t {
+    bit<32> ingress_tstamp;
+}
+
+header int_egress_tstamp_t {
+    bit<32> egress_tstamp;
+}
+
+header int_level2_port_ids_t {
+    bit<32> ingress_port_id;
+    bit<32> egress_port_id;
+}
+
+header int_egress_port_tx_util_t {
+    bit<32> egress_port_tx_util;
+}
+
+const bit<4> INT_REPORT_HEADER_LEN_WORDS = 4;
+const bit<4> INT_REPORT_VERSION = 1;
+
+header int_report_fixed_header_t {
+    bit<4> ver;
+    bit<4> len;
+    bit<3> nprot;
+    bit<5> rep_md_bits_high; // Split rep_md_bits to align to word boundaries
+    bit<1> rep_md_bits_low;
+    bit<6> reserved;
+    bit<1> d;
+    bit<1> q;
+    bit<1> f;
+    bit<6> hw_id;
+    bit<32> switch_id;
+    bit<32> seq_num;
+    bit<32> ingress_tstamp;
+}
+
+struct int_metadata_t {
+    bit<1>  source;    // is INT source functionality enabled
+    bit<1>  sink;        // is INT sink functionality enabled
+    bit<32> switch_id;  // INT switch id is configured by network controller
+    bit<16> insert_byte_cnt;  // counter of inserted INT bytes
+    bit<8>  int_hdr_word_len;  // counter of inserted INT words
+    bit<1>  remove_int;           // indicator that all INT headers and data must be removed at egress for the processed packet 
+    bit<16> sink_reporting_port;    // on which port INT reports must be send to INT collector
+    bit<64> ingress_tstamp;   // pass ingress timestamp from Ingress pipeline to Egress pipeline
+    bit<16> ingress_port;  // pass ingress port from Ingress pipeline to Egress pipeline 
+}
+
+header int_data_t {
+    // Enough room for previous 4 nodes worth of data
+    varbit<1600> data;
+}
+
 @controller_header("packet_in")
 header packet_in_t {
     port_num_t ingress_port;
@@ -250,6 +353,13 @@ header packet_out_t {
 struct headers_t {
     packet_out_t  packet_out;
     packet_in_t   packet_in;
+
+    // INT report headers
+    ethernet_t                report_ethernet;
+    ipv4_t                    report_ipv4;
+    udp_t                     report_udp;
+    int_report_fixed_header_t report_fixed_header;
+
     ethernet_t    ethernet;
     ipv6_t        ipv6;
     ipv4_t        ipv4;
@@ -264,11 +374,30 @@ struct headers_t {
     udp_t         udp;
     icmpv6_t      icmpv6;
     ndp_t         ndp;
+
+    // INT headers
+    int_shim_t              int_shim;
+    int_header_t              int_header;
+  
+    // local INT node metadata
+    int_egress_port_tx_util_t int_egress_port_tx_util;
+    int_egress_tstamp_t       int_egress_tstamp;
+    int_hop_latency_t         int_hop_latency;
+    int_ingress_tstamp_t      int_ingress_tstamp;
+    int_port_ids_t            int_port_ids;
+    int_level2_port_ids_t     int_level2_port_ids;
+    int_q_occupancy_t         int_q_occupancy;
+    int_switch_id_t           int_switch_id;
+
+    // INT metadata of previous nodes
+    int_data_t                int_data;
 }
 
 struct local_metadata_t {
+    int_metadata_t  int_metadata;
     l4_port_t       l4_src_port;
     l4_port_t       l4_dst_port;
+    bit<6>          l4_dscp;
     bit<8>          name_tlv_length;
     bool            is_multicast;
     next_hop_id_t   next_hop_id;

@@ -372,6 +372,12 @@ control ingress(inout headers_t hdr,
     }
 
     apply {
+        // int
+        if (!hdr.udp.isValid() && !hdr.tcp.isValid()) {
+            exit;
+        }
+        Int_source.apply(hdr, local_metadata, standard_metadata);
+
         port_counters_ingress.apply(hdr, standard_metadata);
         port_meters_ingress.apply(hdr, standard_metadata);
         packetio_ingress.apply(hdr, standard_metadata);
@@ -411,6 +417,8 @@ control ingress(inout headers_t hdr,
         //     l2_ternary_table.apply();
         // }
         // acl_table.apply();
+
+        Int_sink_config.apply(hdr. local_metadata, standard_metadata);
     }
 }
 
@@ -423,9 +431,11 @@ control egress(inout headers_t hdr,
                inout standard_metadata_t standard_metadata) {
 
     apply {
+        Int_transit.apply(hdr, local_metadata, standard_metadata);
         port_counters_egress.apply(hdr, standard_metadata);
         port_meters_egress.apply(hdr, standard_metadata);
         packetio_egress.apply(hdr, standard_metadata);
+        Int_sink.apply(hdr, local_metadata, standard_metadata);
     }
 }
 
