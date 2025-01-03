@@ -19,7 +19,7 @@
  */
 
 
-control Int_transit(inout headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
+control Int_transit(inout headers_t hdr, inout local_metadata_t meta, inout standard_metadata_t standard_metadata) {
         // Configure parameters of INT transit node:
         // switch_id which is used within INT node metadata
         // l3_mtu is curently not used but should allow to detect condition if adding new INT metadata will exceed allowed MTU packet size

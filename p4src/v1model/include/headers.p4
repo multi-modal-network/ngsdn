@@ -265,7 +265,7 @@ header int_header_t {
     bit<16> seq;  // rsvd3 - custom implementation of a sequence number
 }
 
-const bit<16> INT_ALL_HEADER_LEN_BYTES = INT_SHIM_HEADER_LEN_BYTES + INT_HEADER_LEN_BYTES
+const bit<16> INT_ALL_HEADER_LEN_BYTES = INT_SHIM_HEADER_LEN_BYTES + INT_HEADER_LEN_BYTES;
 
 header int_switch_id_t {
     bit<32> switch_id;
@@ -384,7 +384,7 @@ struct headers_t {
     int_egress_tstamp_t       int_egress_tstamp;
     int_hop_latency_t         int_hop_latency;
     int_ingress_tstamp_t      int_ingress_tstamp;
-    int_port_ids_t            int_port_ids;
+    int_level1_port_ids_t     int_port_ids;
     int_level2_port_ids_t     int_level2_port_ids;
     int_q_occupancy_t         int_q_occupancy;
     int_switch_id_t           int_switch_id;

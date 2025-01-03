@@ -281,9 +281,9 @@ def main():
     #     file.write(message)
     # time.sleep(0.8)
 
-    srcVmx = math.floor(source_host / 255)
+    srcVmx = math.floor(source_host / 256)
     srcId = (source_host - 1) % 255 + 1
-    dstVmx = math.floor(destination_host / 255)
+    dstVmx = math.floor(destination_host / 256)
     dstId = (destination_host - 1) % 255 + 1
 
     # 生成数据包

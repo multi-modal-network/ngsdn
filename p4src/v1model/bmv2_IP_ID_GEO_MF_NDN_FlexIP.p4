@@ -27,6 +27,9 @@
 #include "./include/control/packet_io.p4"
 #include "./include/control/table0.p4"
 #include "./include/control/host_meter_table.p4"
+#include "./include/int/source.p4"
+#include "./include/int/transit.p4"
+#include "./include/int/sink.p4"
 
 //------------------------------------------------------------------------------
 // INGRESS PIPELINE

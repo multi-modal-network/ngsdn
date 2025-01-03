@@ -156,7 +156,7 @@ parser parser_impl(packet_in packet,
         transition select(local_metadata.dscp) {
             IPv4_DSCP_INT: parse_int;
             default: accept;
-        };
+        }
     }
 
     state parse_udp {
@@ -171,7 +171,7 @@ parser parser_impl(packet_in packet,
 
     state parse_int {
         packet.extract(hdr.int_shim);
-        pakcet.extract(hdr.int_header);
+        packet.extract(hdr.int_header);
         transition accept;
     }
 }

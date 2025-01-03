@@ -24,7 +24,7 @@
 // register to store seq_num
 register<bit<32>> (1) report_seq_num_register;
 
-control Int_report(inout headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
+control Int_report(inout headers_t hdr, inout local_metadata_t meta, inout standard_metadata_t standard_metadata) {
         bit<32> seq_num_value = 0;
 
         // INT Report structure
