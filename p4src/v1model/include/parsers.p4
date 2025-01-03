@@ -53,7 +53,7 @@ parser parser_impl(packet_in packet,
 
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
-        local_metadata.l4_dscp = hdr.ipv4.diffserv / 4;
+        local_metadata.l4_dscp = hdr.ipv4.dscp;
         transition select(hdr.ipv4.protocol) {
             IP_PROTO_TCP: parse_tcp;
             IP_PROTO_UDP: parse_udp;
@@ -153,7 +153,7 @@ parser parser_impl(packet_in packet,
         packet.extract(hdr.tcp);
         local_metadata.l4_src_port = hdr.tcp.src_port;
         local_metadata.l4_dst_port = hdr.tcp.dst_port;
-        transition select(local_metadata.dscp) {
+        transition select(local_metadata.l4_dscp) {
             IPv4_DSCP_INT: parse_int;
             default: accept;
         }
@@ -163,7 +163,7 @@ parser parser_impl(packet_in packet,
         packet.extract(hdr.udp);
         local_metadata.l4_src_port = hdr.udp.src_port;
         local_metadata.l4_dst_port = hdr.udp.dst_port;
-        transition select(local_metadata.dscp, hdr.udp.dstPort){
+        transition select(local_metadata.l4_dscp, hdr.udp.dst_port){
             (6w0x20 &&& 6w0x3f, 16w0x0 &&& 16w0x0): parse_int;
             default: accept;
         }

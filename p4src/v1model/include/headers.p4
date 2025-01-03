@@ -39,26 +39,27 @@ header ipv6_t {
 header ipv4_t {
     bit<4>    version;
     bit<4>    ihl;
-    bit<8>    diffserv;
-    bit<16>   totalLen;
+    bit<6>    dscp;
+    bit<2>    ecn;
+    bit<16>   total_len;
     bit<16>   identification;
     bit<3>    flags;
-    bit<13>   fragOffset;
+    bit<13>   frag_offset;
     bit<8>    ttl;
     bit<8>    protocol;
-    bit<16>   hdrChecksum;
-    bit<32>   srcAddr;
-    bit<32>   dstAddr;
+    bit<16>   hdr_checksum;
+    bit<32>   src_addr;
+    bit<32>   dst_addr;
 }
 
 header flexip_t {
     bit<4>    version;
-    bit<2>    srcFormat;
-    bit<2>    dstFormat;
-    bit<12>   srcLength;
-    bit<12>   dstLength;
-    bit<384>  srcAddr;
-    bit<384>  dstAddr;
+    bit<2>    src_format;
+    bit<2>    dst_format;
+    bit<12>   src_length;
+    bit<12>   dst_length;
+    bit<384>  src_addr;
+    bit<384>  dst_addr;
 }
 
 header tcp_t {
@@ -202,8 +203,8 @@ header gbc_t{
     bit<1> pai;
     bit<15> s;
     bit<16> h;
-    bit<32> geoAreaPosLat; //lat 请求区域中心点的纬度
-    bit<32> geoAreaPosLon; //log 请求区域中心点的经度
+    bit<32> geo_area_pos_lat; //lat 请求区域中心点的纬度
+    bit<32> geo_area_pos_lon; //log 请求区域中心点的经度
     bit<16> disa;
     bit<16> disb;
     bit<16> angle;
@@ -226,21 +227,18 @@ header beacon_t{
 header mf_t{
     bit<32> mf_type;
     bit<32> src_guid;
-    bit<32> dest_guid;
+    bit<32> dst_guid;
 }
 
 // 身份模态报文首部
 header id_t {
-    bit<32> srcIdentity;
-    bit<32> dstIdentity;
+    bit<32> src_identity;
+    bit<32> dst_identity;
 }
 
 
 // ---------------- int ----------------
-const bit<6> IPv4_DSCP_INT = 0x20;  // indicates an INT header in the packet
-const bit<8> INT_TYPE_HOP_BY_HOP = 1;   // HOP_BY_HOP的INT类型是1
 // int填充垫片
-const bit<16> INT_SHIM_HEADER_LEN_BYTES = 4;
 header int_shim_t {
     bit<8> int_type;
     bit<8> rsvd1;
@@ -250,7 +248,6 @@ header int_shim_t {
 }
 
 // int首部
-const bit<16> INT_HEADER_LEN_BYTES = 8;
 header int_header_t {
     bit<4> ver;
     bit<2> rep;
@@ -264,8 +261,6 @@ header int_header_t {
     bit<16> instruction_mask;   // instruction的bitmap
     bit<16> seq;  // rsvd3 - custom implementation of a sequence number
 }
-
-const bit<16> INT_ALL_HEADER_LEN_BYTES = INT_SHIM_HEADER_LEN_BYTES + INT_HEADER_LEN_BYTES;
 
 header int_switch_id_t {
     bit<32> switch_id;
@@ -301,9 +296,6 @@ header int_level2_port_ids_t {
 header int_egress_port_tx_util_t {
     bit<32> egress_port_tx_util;
 }
-
-const bit<4> INT_REPORT_HEADER_LEN_WORDS = 4;
-const bit<4> INT_REPORT_VERSION = 1;
 
 header int_report_fixed_header_t {
     bit<4> ver;
@@ -384,7 +376,7 @@ struct headers_t {
     int_egress_tstamp_t       int_egress_tstamp;
     int_hop_latency_t         int_hop_latency;
     int_ingress_tstamp_t      int_ingress_tstamp;
-    int_level1_port_ids_t     int_port_ids;
+    int_level1_port_ids_t     int_level1_port_ids;
     int_level2_port_ids_t     int_level2_port_ids;
     int_q_occupancy_t         int_q_occupancy;
     int_switch_id_t           int_switch_id;

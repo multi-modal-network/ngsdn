@@ -52,8 +52,8 @@ control table0_control(inout headers_t hdr,
             hdr.ethernet.src_addr          : ternary;
             hdr.ethernet.dst_addr          : ternary;
             hdr.ethernet.ether_type        : ternary;
-            hdr.ipv4.srcAddr               : ternary;
-            hdr.ipv4.dstAddr               : ternary;
+            hdr.ipv4.src_addr               : ternary;
+            hdr.ipv4.dst_addr               : ternary;
             hdr.ipv4.protocol              : ternary;
             local_metadata.l4_src_port     : ternary;
             local_metadata.l4_dst_port     : ternary;

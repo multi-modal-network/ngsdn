@@ -29,7 +29,7 @@ control Int_source(inout headers_t hdr, inout local_metadata_t meta, inout stand
     // hope_metadata_len - how INT metadata words are added by a single INT node
     // ins_cnt - how many INT headers must be added by a single INT node
     // ins_mask - instruction_mask defining which information (INT headers types) must added to the packet
-    action configure_source(bit<8> max_hop, bit<5> hop_metadata_len, bit<5> ins_cnt, bit<16> ins_mask) {
+    action configure_source(bit<8> max_hop, bit<5> hop_metadata_len, bit<16> ins_mask) {
         hdr.int_shim.setValid();
         hdr.int_shim.int_type = INT_TYPE_HOP_BY_HOP;
         hdr.int_shim.len = (bit<8>)INT_ALL_HEADER_LEN_BYTES>>2;
@@ -51,7 +51,7 @@ control Int_source(inout headers_t hdr, inout local_metadata_t meta, inout stand
         hdr.int_shim.dscp = hdr.ipv4.dscp;
         
         hdr.ipv4.dscp = IPv4_DSCP_INT;   // indicates that INT header in the packet
-        hdr.ipv4.totalLen = hdr.ipv4.totalLen + INT_ALL_HEADER_LEN_BYTES;  // adding size of INT headers
+        hdr.ipv4.total_len = hdr.ipv4.total_len + INT_ALL_HEADER_LEN_BYTES;  // adding size of INT headers
         
         hdr.udp.len = hdr.udp.len + INT_ALL_HEADER_LEN_BYTES;
     }
@@ -64,10 +64,10 @@ control Int_source(inout headers_t hdr, inout local_metadata_t meta, inout stand
             configure_source;
         }
         key = {
-            hdr.ipv4.srcAddr     : ternary;
-            hdr.ipv4.dstAddr     : ternary;
-            meta.layer34_metadata.l4_src: ternary;
-            meta.layer34_metadata.l4_dst: ternary;
+            hdr.ipv4.src_addr     : ternary;
+            hdr.ipv4.dst_addr     : ternary;
+            meta.l4_src_port: ternary;
+            meta.l4_dst_port: ternary;
         }
         size = 127;
     }
@@ -92,7 +92,7 @@ control Int_source(inout headers_t hdr, inout local_metadata_t meta, inout stand
     apply {
         // in case of frame clone for the INT sink reporting
         // ingress timestamp is not available on Egress pipeline
-        meta.int_metadata.ingress_tstamp = standard_metadata.ingress_global_timestamp;
+        meta.int_metadata.ingress_tstamp = (bit<64>)standard_metadata.ingress_global_timestamp;
         meta.int_metadata.ingress_port = (bit<16>)standard_metadata.ingress_port;
         //check if packet appeard on ingress port with active INT source
         tb_activate_source.apply();

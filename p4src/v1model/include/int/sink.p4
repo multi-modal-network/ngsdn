@@ -26,7 +26,7 @@ control Int_sink_config(inout headers_t hdr, inout local_metadata_t meta, inout 
     action configure_sink(bit<16> sink_reporting_port) {
         meta.int_metadata.remove_int = 1;   // indicate that INT headers must be removed in egress
         meta.int_metadata.sink_reporting_port = (bit<16>)sink_reporting_port; 
-        clone3<metadata>(CloneType.I2E, INT_REPORT_MIRROR_SESSION_ID, meta);
+        clone3<local_metadata_t>(CloneType.I2E, INT_REPORT_MIRROR_SESSION_ID, meta);
     }
 
     //table used to activate INT sink for particular egress port of the switch
@@ -54,14 +54,14 @@ control Int_sink(inout headers_t hdr, inout local_metadata_t meta, inout standar
          // restore original headers
         hdr.ipv4.dscp = hdr.int_shim.dscp;
         bit<16> len_bytes = ((bit<16>)hdr.int_shim.len) << 2;
-        hdr.ipv4.totalLen = hdr.ipv4.totalLen - len_bytes;
+        hdr.ipv4.total_len = hdr.ipv4.total_len - len_bytes;
         if (hdr.udp.isValid()) {
             hdr.udp.len = hdr.udp.len - len_bytes;
         }
 
         // remove INT data added in INT sink
         hdr.int_switch_id.setInvalid();
-        hdr.int_port_ids.setInvalid();
+        hdr.int_level1_port_ids.setInvalid();
         hdr.int_ingress_tstamp.setInvalid();
         hdr.int_egress_tstamp.setInvalid();
         hdr.int_hop_latency.setInvalid();

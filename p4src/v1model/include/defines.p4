@@ -21,6 +21,14 @@
 #define MAX_COMPONENTS 8
 #define CPU_CLONE_SESSION_ID 99
 
+#define PKT_INSTANCE_TYPE_NORMAL 0
+#define PKT_INSTANCE_TYPE_INGRESS_CLONE 1
+#define PKT_INSTANCE_TYPE_EGRESS_CLONE 2
+#define PKT_INSTANCE_TYPE_COALESCED 3
+#define PKT_INSTANCE_TYPE_INGRESS_RECIRC 4
+#define PKT_INSTANCE_TYPE_REPLICATION 5
+#define PKT_INSTANCE_TYPE_RESUBMIT 6
+
 #ifndef _BOOL
 #define _BOOL bool
 #endif
@@ -68,4 +76,13 @@ const MeterColor MeterColor_GREEN = 8w0;
 const MeterColor MeterColor_YELLOW = 8w1;
 const MeterColor MeterColor_RED = 8w2;
 
+// int
+const bit<6>  IPv4_DSCP_INT = 0x20;  // indicates an INT header in the packet
+const bit<8>  INT_TYPE_HOP_BY_HOP = 1;   // HOP_BY_HOP的INT类型是1
+const bit<16> INT_SHIM_HEADER_LEN_BYTES = 4;
+const bit<16> INT_HEADER_LEN_BYTES = 8;
+const bit<16> INT_ALL_HEADER_LEN_BYTES = INT_SHIM_HEADER_LEN_BYTES + INT_HEADER_LEN_BYTES;
+const bit<4>  INT_VERSION = 1;
+const bit<4> INT_REPORT_HEADER_LEN_WORDS = 4;
+const bit<4> INT_REPORT_VERSION = 1;
 #endif
