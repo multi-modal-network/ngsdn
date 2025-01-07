@@ -4,13 +4,13 @@
 #include <core.p4>
 #include <tna.p4>
 
-#include "../shared/define.p4"
-#include "../shared/size.p4"
-#include "../shared/header.p4"
-#include "../tna/include/parser.p4"
-#include "../tna/include/control/packetio.p4"
-#include "../tna/include/control/table0.p4"
-#include "../tna/multi.p4"
+#include "./include/defines.p4"
+#include "./include/size.p4"
+#include "./include/headers.p4"
+#include "./include/parsers.p4"
+#include "./include/control/packetio.p4"
+#include "./include/control/table0.p4"
+#include "./multi.p4"
 
 control BasicIngress (
     /* Basic.p4 */

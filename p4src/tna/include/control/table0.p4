@@ -4,8 +4,8 @@
 #include <core.p4>
 #include <tna.p4>
 
-#include "../../../shared/define.p4"
-#include "../../../shared/header.p4"
+#include "../defines.p4"
+#include "../headers.p4"
 
 
 control Table0 (inout ingress_headers_t hdr,
@@ -40,8 +40,8 @@ control Table0 (inout ingress_headers_t hdr,
             hdr.ethernet.src_addr          : ternary @name("eth_src");
             hdr.ethernet.dst_addr          : ternary @name("eth_dst");
             hdr.ethernet.ether_type        : ternary @name("eth_type");
-            hdr.ipv4.srcAddr               : ternary @name("ipv4_src");
-            hdr.ipv4.dstAddr               : ternary @name("ipv4_dst");
+            hdr.ipv4.src_addr              : ternary @name("ipv4_src");
+            hdr.ipv4.dst_addr              : ternary @name("ipv4_dst");
             hdr.ipv4.protocol              : ternary @name("ip_proto");
             basic_md.l4_src_port           : ternary @name("l4_sport");
             basic_md.l4_dst_port           : ternary @name("l4_dport");

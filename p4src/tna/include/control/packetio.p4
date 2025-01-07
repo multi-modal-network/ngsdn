@@ -1,7 +1,7 @@
 // Copyright 2020-present Open Networking Foundation
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../../shared/header.p4"
+#include "../headers.p4"
 
 control PacketIoIngress(inout ingress_headers_t hdr,
                         inout Basic_ingress_metadata_t basic_md,

@@ -78,8 +78,8 @@ control MultiIngress(inout ingress_headers_t hdr,
     table routing_v4_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.ipv4.srcAddr: exact;
-            hdr.ipv4.dstAddr: exact;
+            hdr.ipv4.src_addr: exact;
+            hdr.ipv4.dst_addr: exact;
         }
 
         actions = {
@@ -134,8 +134,8 @@ control MultiIngress(inout ingress_headers_t hdr,
     table routing_id_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.id.srcIdentity: exact;
-            hdr.id.dstIdentity: exact;
+            hdr.id.src_identity: exact;
+            hdr.id.dst_identity: exact;
         }
         actions = {
             set_next_id_hop;
@@ -165,8 +165,8 @@ control MultiIngress(inout ingress_headers_t hdr,
     table routing_geo_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.gbc.geoAreaPosLat: exact;
-            hdr.gbc.geoAreaPosLon: exact;
+            hdr.gbc.geo_area_pos_lat: exact;
+            hdr.gbc.geo_area_pos_lon: exact;
             hdr.gbc.disa: exact;
             hdr.gbc.disb: exact;
         }
@@ -197,7 +197,7 @@ control MultiIngress(inout ingress_headers_t hdr,
         key = {
             hdr.ethernet.ether_type: exact;
             hdr.mf.src_guid: exact;
-            hdr.mf.dest_guid : exact;
+            hdr.mf.dst_guid : exact;
         }
 
         actions = {
@@ -253,10 +253,10 @@ control MultiIngress(inout ingress_headers_t hdr,
     table routing_flexip_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.flexip.srcFormat: exact;
-            hdr.flexip.dstFormat: exact;
-            hdr.flexip.srcAddr: exact;
-            hdr.flexip.dstAddr: exact;
+            hdr.flexip.src_format: exact;
+            hdr.flexip.dst_format: exact;
+            hdr.flexip.src_addr: exact;
+            hdr.flexip.dst_addr: exact;
         }
         actions = {
             set_next_flexip_hop;

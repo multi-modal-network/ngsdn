@@ -70,49 +70,49 @@ control ingress(inout headers_t hdr,
 
     // --- l2_exact_table (for unicast entries) --------------------------------
 
-    action set_egress_port(port_num_t dst_port) {
-        standard_metadata.egress_spec = dst_port;
-    }
+    // action set_egress_port(port_num_t dst_port) {
+    //     standard_metadata.egress_spec = dst_port;
+    // }
 
-    table l2_exact_table {
-        key = {
-            hdr.ethernet.dst_addr: exact;
-        }
-        actions = {
-            set_egress_port;
-            @defaultonly drop;
-        }
-        const default_action = drop;
-        // The @name annotation is used here to provide a name to this table
-        // counter, as it will be needed by the compiler to generate the
-        // corresponding P4Info entity.
-        @name("l2_exact_table_counter")
-        counters = direct_counter(CounterType.packets_and_bytes);
-    }
+    // table l2_exact_table {
+    //     key = {
+    //         hdr.ethernet.dst_addr: exact;
+    //     }
+    //     actions = {
+    //         set_egress_port;
+    //         @defaultonly drop;
+    //     }
+    //     const default_action = drop;
+    //     // The @name annotation is used here to provide a name to this table
+    //     // counter, as it will be needed by the compiler to generate the
+    //     // corresponding P4Info entity.
+    //     @name("l2_exact_table_counter")
+    //     counters = direct_counter(CounterType.packets_and_bytes);
+    // }
 
     // --- l2_ternary_table (for broadcast/multicast entries) ------------------
 
-    action set_multicast_group(mcast_group_id_t gid) {
-        // gid will be used by the Packet Replication Engine (PRE) in the
-        // Traffic Manager--located right after the ingress pipeline, to
-        // replicate a packet to multiple egress ports, specified by the control
-        // plane by means of P4Runtime MulticastGroupEntry messages.
-        standard_metadata.mcast_grp = gid;
-        local_metadata.is_multicast = true;
-    }
+    // action set_multicast_group(mcast_group_id_t gid) {
+    //     // gid will be used by the Packet Replication Engine (PRE) in the
+    //     // Traffic Manager--located right after the ingress pipeline, to
+    //     // replicate a packet to multiple egress ports, specified by the control
+    //     // plane by means of P4Runtime MulticastGroupEntry messages.
+    //     standard_metadata.mcast_grp = gid;
+    //     local_metadata.is_multicast = true;
+    // }
 
-    table l2_ternary_table {
-        key = {
-            hdr.ethernet.dst_addr: ternary;
-        }
-        actions = {
-            set_multicast_group;
-            @defaultonly drop;
-        }
-        const default_action = drop;
-        @name("l2_ternary_table_counter")
-        counters = direct_counter(CounterType.packets_and_bytes);
-    }
+    // table l2_ternary_table {
+    //     key = {
+    //         hdr.ethernet.dst_addr: ternary;
+    //     }
+    //     actions = {
+    //         set_multicast_group;
+    //         @defaultonly drop;
+    //     }
+    //     const default_action = drop;
+    //     @name("l2_ternary_table_counter")
+    //     counters = direct_counter(CounterType.packets_and_bytes);
+    // }
 
     // *** L3 ROUTING
     //
@@ -145,8 +145,8 @@ control ingress(inout headers_t hdr,
     table routing_id_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.id.srcIdentity: exact;
-            hdr.id.dstIdentity: exact;
+            hdr.id.src_identity: exact;
+            hdr.id.dst_identity: exact;
         }
         actions = {
             set_next_id_hop;
@@ -166,7 +166,7 @@ control ingress(inout headers_t hdr,
         key = {
             hdr.ethernet.ether_type: exact;
             hdr.mf.src_guid: exact;
-            hdr.mf.dest_guid : exact;
+            hdr.mf.dst_guid : exact;
         }
 
         actions = {
@@ -189,8 +189,8 @@ control ingress(inout headers_t hdr,
     table routing_geo_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.gbc.geoAreaPosLat: exact;
-            hdr.gbc.geoAreaPosLon: exact;
+            hdr.gbc.geo_area_pos_lat: exact;
+            hdr.gbc.geo_area_pos_lon: exact;
             hdr.gbc.disa: exact;
             hdr.gbc.disb: exact;
         }
@@ -268,8 +268,8 @@ control ingress(inout headers_t hdr,
     table routing_v4_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.ipv4.srcAddr: exact;
-            hdr.ipv4.dstAddr: exact;
+            hdr.ipv4.src_addr: exact;
+            hdr.ipv4.dst_addr: exact;
         }
         actions = {
             set_next_v4_hop;
@@ -292,37 +292,37 @@ control ingress(inout headers_t hdr,
 
     // --- acl_table -----------------------------------------------------------
 
-    action send_to_cpu() {
-        standard_metadata.egress_spec = CPU_PORT;
-    }
+    // action send_to_cpu() {
+    //     standard_metadata.egress_spec = CPU_PORT;
+    // }
 
-    action clone_to_cpu() {
-        // Cloning is achieved by using a v1model-specific primitive. Here we
-        // set the type of clone operation (ingress-to-egress pipeline), the
-        // clone session ID (the CPU one), and the metadata fields we want to
-        // preserve for the cloned packet replica.
-        clone3(CloneType.I2E, CPU_CLONE_SESSION_ID, { standard_metadata.ingress_port });
-    }
+    // action clone_to_cpu() {
+    //     // Cloning is achieved by using a v1model-specific primitive. Here we
+    //     // set the type of clone operation (ingress-to-egress pipeline), the
+    //     // clone session ID (the CPU one), and the metadata fields we want to
+    //     // preserve for the cloned packet replica.
+    //     clone3(CloneType.I2E, CPU_CLONE_SESSION_ID, { standard_metadata.ingress_port });
+    // }
 
-    table acl_table {
-        key = {
-            standard_metadata.ingress_port: ternary;
-            hdr.ethernet.dst_addr:          ternary;
-            hdr.ethernet.src_addr:          ternary;
-            hdr.ethernet.ether_type:        ternary;
-            hdr.ipv6.next_hdr:              ternary;
-            hdr.icmpv6.type:                ternary;
-            local_metadata.l4_src_port:     ternary;
-            local_metadata.l4_dst_port:     ternary;
-        }
-        actions = {
-            send_to_cpu;
-            clone_to_cpu;
-            drop;
-        }
-        @name("acl_table_counter")
-        counters = direct_counter(CounterType.packets_and_bytes);
-    }
+    // table acl_table {
+    //     key = {
+    //         standard_metadata.ingress_port: ternary;
+    //         hdr.ethernet.dst_addr:          ternary;
+    //         hdr.ethernet.src_addr:          ternary;
+    //         hdr.ethernet.ether_type:        ternary;
+    //         hdr.ipv6.next_hdr:              ternary;
+    //         hdr.icmpv6.type:                ternary;
+    //         local_metadata.l4_src_port:     ternary;
+    //         local_metadata.l4_dst_port:     ternary;
+    //     }
+    //     actions = {
+    //         send_to_cpu;
+    //         clone_to_cpu;
+    //         drop;
+    //     }
+    //     @name("acl_table_counter")
+    //     counters = direct_counter(CounterType.packets_and_bytes);
+    // }
 
     // *** NDP HANDLING
     //

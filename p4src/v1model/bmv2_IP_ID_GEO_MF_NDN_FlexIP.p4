@@ -27,9 +27,6 @@
 #include "./include/control/packet_io.p4"
 #include "./include/control/table0.p4"
 #include "./include/control/host_meter_table.p4"
-#include "./include/int/source.p4"
-#include "./include/int/transit.p4"
-#include "./include/int/sink.p4"
 
 //------------------------------------------------------------------------------
 // INGRESS PIPELINE
@@ -375,11 +372,6 @@ control ingress(inout headers_t hdr,
     }
 
     apply {
-        // int
-        if (!hdr.udp.isValid() && !hdr.tcp.isValid()) {
-            exit;
-        }
-        Int_source.apply(hdr, local_metadata, standard_metadata);
 
         port_counters_ingress.apply(hdr, standard_metadata);
         port_meters_ingress.apply(hdr, standard_metadata);
@@ -421,7 +413,6 @@ control ingress(inout headers_t hdr,
         // }
         // acl_table.apply();
 
-        Int_sink_config.apply(hdr, local_metadata, standard_metadata);
     }
 }
 
@@ -434,11 +425,9 @@ control egress(inout headers_t hdr,
                inout standard_metadata_t standard_metadata) {
 
     apply {
-        Int_transit.apply(hdr, local_metadata, standard_metadata);
         port_counters_egress.apply(hdr, standard_metadata);
         port_meters_egress.apply(hdr, standard_metadata);
         packetio_egress.apply(hdr, standard_metadata);
-        Int_sink.apply(hdr, local_metadata, standard_metadata);
     }
 }
 

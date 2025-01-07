@@ -1,15 +1,37 @@
-modal_type:geo, frequency:1, source_host:200, destination_host:400
-generate_geo_pkt 0 200 1 145
-000000001111111
-1077923020
+modal_type:ipv4, frequency:1, source_host:200, destination_host:250
+generate_ip_pkt 0 200 0 250
 ###[ Ethernet ]### 
-  dst       = 02:42:0a:01:00:03
+  dst       = 02:42:0a:01:00:02
   src       = 02:42:0a:01:00:02
-  type      = 0x8947
-###[ Raw ]### 
-     load      = '\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00R@?\\xcc\\xcc\x00\x00\x00\x00\x00\x00\x00\x00'
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x0
+     len       = 40
+     id        = 1
+     flags     = 
+     frag      = 0
+     ttl       = 64
+     proto     = tcp
+     chksum    = 0x1f4d
+     src       = 172.20.1.148
+     dst       = 172.20.1.198
+     \options   \
+###[ TCP ]### 
+        sport     = 49152
+        dport     = 1234
+        seq       = 0
+        ack       = 0
+        dataofs   = 5
+        reserved  = 0
+        flags     = S
+        window    = 8192
+        chksum    = 0x6f8d
+        urgptr    = 0
+        options   = ''
 
-sending on interface h200-eth0 form 200 to 400, model : geo 
-['id', '200', '400'] 136 ['geo', '200', '400'] 137
-geo 200 400 geo 200 400
+sending on interface h200-eth0 form 200 to 250, model : ipv4 
+['ipv4', '200', '250'] 320 ['ipv4', '200', '250'] 321
+ipv4 200 250 ipv4 200 250
 resend!
