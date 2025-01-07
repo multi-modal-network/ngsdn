@@ -1,37 +1,29 @@
-modal_type:ipv4, frequency:1, source_host:200, destination_host:250
-generate_ip_pkt 0 200 0 250
+WARNING: Mac address to reach destination not found. Using broadcast.
+WARNING: Mac address to reach destination not found. Using broadcast.
+modal_type:flexip, frequency:1, source_host:200, destination_host:250
+generate_flexip_pkt 200 250
+substring F7F10C0F
+substring F2ACF200
+substring 04000005
+substring F5E124F4
+substring 00000000
+substring 00000100
+substring 00000000
+substring 00000000
+substring 00000000
+substring 00000000
+substring 00000017
+substring 4876E824
+substring 96000000
+src:{}, dst:{}, flexip_prefix [4159769615, 4071420416, 67108869, 4125172980, 0, 256, 0, 0, 0, 0, 23, 1215752228] [2516582400, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 135790600
+08180008F7F10C0FF2ACF20004000005F5E124F4000000000000010000000000000000000000000000000000000000174876E824000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000096
 ###[ Ethernet ]### 
-  dst       = 02:42:0a:01:00:02
-  src       = 02:42:0a:01:00:02
-  type      = IPv4
-###[ IP ]### 
-     version   = 4
-     ihl       = 5
-     tos       = 0x0
-     len       = 40
-     id        = 1
-     flags     = 
-     frag      = 0
-     ttl       = 64
-     proto     = tcp
-     chksum    = 0x1f4d
-     src       = 172.20.1.148
-     dst       = 172.20.1.198
-     \options   \
-###[ TCP ]### 
-        sport     = 49152
-        dport     = 1234
-        seq       = 0
-        ack       = 0
-        dataofs   = 5
-        reserved  = 0
-        flags     = S
-        window    = 8192
-        chksum    = 0x6f8d
-        urgptr    = 0
-        options   = ''
+  dst       = ff:ff:ff:ff:ff:ff
+  src       = 00:00:00:00:00:00
+  type      = 0x3690
+###[ Raw ]### 
+     load      = '\x08\x18\x00\x08\\xf7\\xf1\x0c\x0f\\xf2\\xac\\xf2\x00\x04\x00\x00\x05\\xf5\\xe1$\\xf4\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x17Hv\\xe8$\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\\x96'
 
-sending on interface h200-eth0 form 200 to 250, model : ipv4 
-['ipv4', '200', '250'] 320 ['ipv4', '200', '250'] 321
-ipv4 200 250 ipv4 200 250
-resend!
+sending on interface h200-eth0 form 200 to 250, model : flexip 
+['flexip', '355', '250'] 332 ['flexip', '355', '250'] 333
+flexip 355 250 flexip 200 250
