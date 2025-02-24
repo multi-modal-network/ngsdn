@@ -194,7 +194,6 @@ def customFlexIP(vmx, i):
     return "{:02X}".format(vmx * 20 + i - 128), length_restrained, format_restrained
 
 def generate_flexip_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
-    print("generate_flexip_pkt", source_host, destination_host)
     srcFlexIP, srcLength, srcFormat = customFlexIP(srcVmx, srcId)
     dstFlexIP, dstLength, dstFormat = customFlexIP(dstVmx, dstId)
     flexip_prefix = dstLength + (srcLength << 12) + (dstFormat << 24) + (srcFormat << 26)
