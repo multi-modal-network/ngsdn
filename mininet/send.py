@@ -139,59 +139,59 @@ format_hierarchical = 2
 format_multiSemantics = 3
 
 def customFlexIP(vmx, i):
-    F0 = 2048 + vmx * 100 + i - 64
-    F1 = 202271720 + vmx * 100000 + i - 64
-    F2 = (1<<50) + vmx * 100000000 + i - 64
-    F4 = (1<<200) + vmx * 100000000000 + i - 64
-    if 65<=i<=68:
+    F0 = vmx*255 + i
+    F1 = vmx*255*255 + i
+    F2 = vmx*255*255*255 + i
+    F4 = vmx*255*255*255*255 + i
+    if 144<=i<152:
         return "F0{:04X}".format(F0), length_index + length_extendable_F0, format_extendable
-    elif 69<=i<=72:
+    elif 152<=i<160:
         return "F1{:08X}".format(F1), length_index + length_extendable_F1, format_extendable
-    elif 73<=i<=76:
+    elif 160<=i<168:
         return "F2{:016X}".format(F2), length_index + length_extendable_F2, format_extendable
-    elif 77<=i<=80:
+    elif 168<=i<176:
         return "F4{:064X}".format(F4), length_index + length_extendable_F4, format_extendable
-    elif i==81:
+    elif 176<=i<180:
         return "F6{:02X}F0{:04X}".format(i, F0), length_index + length_restrained + length_index + length_extendable_F0, format_hierarchical
-    elif i==82:
+    elif 180<=i<184:
         return "F6{:02X}F1{:08X}".format(i, F1), length_index + length_restrained + length_index + length_extendable_F1, format_hierarchical
-    elif i==83:
+    elif 184<=i<188:
         return "F6{:02X}F2{:016X}".format(i, F2), length_index + length_restrained + length_index + length_extendable_F2, format_hierarchical
-    elif i==84:
+    elif 188<=i<192:
         return "F6{:02X}F4{:064X}".format(i, F4), length_index + length_restrained + length_index + length_extendable_F4, format_hierarchical
-    elif i==85:
+    elif 192<=i<196:
         return "F6F0{:04X}F1{:08X}".format(F0, F1), length_index + length_index + length_extendable_F0 + length_index + length_extendable_F1, format_hierarchical
-    elif i==86:
+    elif 196<=i<200:
         return "F6F0{:04X}F2{:016X}".format(F0, F2), length_index + length_index + length_extendable_F0 + length_index + length_extendable_F2, format_hierarchical
-    elif i==87:
+    elif 200<=i<204:
         return "F6F0{:04X}F4{:064X}".format(F0, F4), length_index + length_index + length_extendable_F0 + length_index + length_extendable_F4, format_hierarchical
-    elif i==88:
+    elif 204<=i<208:
         return "F6F1{:08X}F2{:016X}".format(F1, F2), length_index + length_index + length_extendable_F1 + length_index + length_extendable_F2, format_hierarchical
-    elif i==89:
+    elif 208<=i<212:
         return "F6F1{:08X}F4{:064X}".format(F1, F4), length_index + length_index + length_extendable_F1 + length_index + length_extendable_F4, format_hierarchical
-    elif i==90:
+    elif 212<=i<216:
         return "F6F2{:016X}F4{:064X}".format(F2, F4), length_index + length_index + length_extendable_F2 + length_index + length_extendable_F4, format_hierarchical
-    elif i==91:
+    elif 216<=i<220:
         return "F7{:02X}F0{:04X}F1{:08X}".format(i, F0, F1), length_index + length_restrained + length_index + length_extendable_F0 + length_index + length_extendable_F1, format_hierarchical
-    elif i==92:
+    elif 220<=i<224:
         return "F7{:02X}F0{:04X}F2{:016X}".format(i, F0, F2), length_index + length_restrained + length_index + length_extendable_F0 + length_index + length_extendable_F2, format_hierarchical
-    elif i==93:
+    elif 224<=i<228:
         return "F7{:02X}F0{:04X}F4{:064X}".format(i, F0, F4), length_index + length_restrained + length_index + length_extendable_F0 + length_index + length_extendable_F4, format_hierarchical
-    elif i==94:
+    elif 228<=i<232:
         return "F7{:02X}F1{:08X}F2{:016X}".format(i, F1, F2), length_index + length_restrained + length_index + length_extendable_F1 + length_index + length_extendable_F2, format_hierarchical
-    elif i==95:
+    elif 232<=i<236:
         return "F7{:02X}F1{:08X}F4{:064X}".format(i, F1, F4), length_index + length_restrained + length_index + length_extendable_F1 + length_index + length_extendable_F4, format_hierarchical
-    elif i==96:
+    elif 236<=i<240:
         return "F7{:02X}F2{:016X}F4{:064X}".format(i, F2, F4), length_index + length_restrained + length_index + length_extendable_F2 + length_index + length_extendable_F4, format_hierarchical
-    elif i==97:
+    elif 240<=i<244:
         return "F7F0{:04X}F1{:08X}F2{:016X}".format(F0, F1, F2), length_index + length_index + length_extendable_F0 + length_index + length_extendable_F1 + length_index + length_extendable_F2, format_hierarchical
-    elif i==98:
+    elif 244<=i<248:
         return "F7F0{:04X}F1{:08X}F4{:064X}".format(F0, F1, F4), length_index + length_index + length_extendable_F0 + length_index + length_extendable_F1 + length_index + length_extendable_F4, format_hierarchical
-    elif i==99:
+    elif 248<=i<252:
         return "F7F0{:04X}F2{:016X}F4{:064X}".format(F0, F2, F4), length_index + length_index + length_extendable_F0 + length_index + length_extendable_F2 + length_index + length_extendable_F4, format_hierarchical
-    elif i==100:
+    elif 252<=i<256:
         return "F7F1{:08X}F2{:016X}F4{:064X}".format(F1, F2, F4), length_index + length_index + length_extendable_F1 + length_index + length_extendable_F2 + length_index + length_extendable_F4, format_hierarchical
-    return "{:02X}".format(i), length_restrained, format_restrained
+    return "{:02X}".format(vmx * 20 + i - 128), length_restrained, format_restrained
 
 def generate_flexip_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
     print("generate_flexip_pkt", source_host, destination_host)
