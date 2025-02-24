@@ -1,4 +1,4 @@
-#include "../shared/header.p4"
+#include "./include/header.p4"
 
 control MultiIngress(inout ingress_headers_t hdr,
                         inout Basic_ingress_metadata_t basic_md,
