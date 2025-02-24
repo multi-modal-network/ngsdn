@@ -116,14 +116,6 @@ def generate_ndn_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
     return pkt
 
 
-# generate IP packet
-def hostToIPParam(parameter):
-    hostId = parameter - 64
-    vmx = math.floor(hostId / 100)
-    i = hostId % 100 + 64
-    return "172.20.{}.{}".format(vmx + 1, i - 64 + 12)  # ip与拓扑中的一致
-
-
 def generate_ip_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
     print("generate_ip_pkt", srcVmx, srcId, dstVmx, dstId)
     srcIP = "172.20.{}.{}".format(srcVmx + 1, srcId - 64 + 12)
@@ -201,16 +193,10 @@ def customFlexIP(vmx, i):
         return "F7F1{:08X}F2{:016X}F4{:064X}".format(F1, F2, F4), length_index + length_index + length_extendable_F1 + length_index + length_extendable_F2 + length_index + length_extendable_F4, format_hierarchical
     return "{:02X}".format(i), length_restrained, format_restrained
 
-def hostToFlexIPParam(parameter):
-    hostId = parameter - 64
-    vmx = math.floor(hostId / 100)
-    i = hostId % 100 + 64
-    return customFlexIP(vmx, i)
-
-def generate_flexip_pkt(ethertype, source_host, destination_host):
+def generate_flexip_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
     print("generate_flexip_pkt", source_host, destination_host)
-    srcFlexIP, srcLength, srcFormat = hostToFlexIPParam(source_host)
-    dstFlexIP, dstLength, dstFormat = hostToFlexIPParam(destination_host)
+    srcFlexIP, srcLength, srcFormat = customFlexIP(srcVmx, srcId)
+    dstFlexIP, dstLength, dstFormat = customFlexIP(dstVmx, dstId)
     flexip_prefix = dstLength + (srcLength << 12) + (dstFormat << 24) + (srcFormat << 26)
     src = []
     for i in range(0, len(srcFlexIP), 8):
@@ -298,7 +284,7 @@ def main():
     elif modal_type == "ipv4":
         pkt = generate_ip_pkt(ip_ethertype, srcVmx, srcId, dstVmx, dstId)
     elif modal_type == "flexip":
-        pkt = generate_flexip_pkt(flexip_ethertype, source_host, destination_host)
+        pkt = generate_flexip_pkt(flexip_ethertype, srcVmx, srcId, dstVmx, dstId)
     else:
         print("Invalid modal type")
         exit(1)
