@@ -243,6 +243,7 @@ control MultiIngress(inout ingress_headers_t hdr,
     // FlexIP模态
     action set_next_flexip_hop(PortId_t dst_port) {
         ig_tm_md.ucast_egress_port = dst_port;
+        flexip_counter.count();
     }
     action flexip_to_cpu(){
         ig_tm_md.ucast_egress_port = CPU_PORT;
@@ -288,6 +289,9 @@ control MultiIngress(inout ingress_headers_t hdr,
                 }
                 if(hdr.ethernet.ether_type == ETHERTYPE_NDN) {
                     routing_ndn_table.apply();
+                }
+                if(hdr.ethernet.ether_type == ETHERTYPE_FLEXIP) {
+                    routing_flexip_table.apply();
                 }
             }
     }
