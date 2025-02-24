@@ -227,7 +227,7 @@ def generate_flexip_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
             print(f"Invalid hexadecimal substring: {substring}")
     src += [0] * (12 - len(src))
     dst += [0] * (12 - len(dst))
-    print("src:{}, dst:{}, flexip_prefix", src, dst, flexip_prefix)
+    print("srcFlexIP:{}, dstFlexIP:{}, flexip_prefix", srcFlexIP, dstFlexIP, flexip_prefix)
     pkt = Ether(type=ethertype)
     # pkt = pkt / Raw(load=struct.pack("!LLLLLLLLLLLLLLLLLLLLLLLLL", flexip_prefix, *src[:12], *dst[:12]))
     hex_string = hex(flexip_prefix)[2:10].zfill(8) + srcFlexIP.zfill(96) + dstFlexIP.zfill(96)

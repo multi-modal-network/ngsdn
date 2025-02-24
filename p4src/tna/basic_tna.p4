@@ -11,7 +11,7 @@
 #include "./include/control/packetio.p4"
 #include "./include/control/table0.p4"
 
-control Ingress (
+control ingress (
     /* Basic.p4 */
     inout ingress_headers_t hdr,
     inout Basic_ingress_metadata_t Basic_md,
@@ -53,7 +53,7 @@ control Ingress (
 
     action route_l3() {
         l2_counter.count();
-        basic_md.l3 = 1;
+        Basic_md.l3 = 1;
     }
 
 
@@ -310,7 +310,7 @@ control Ingress (
     }
 }
 
-control Egress (
+control egress (
     /* Basic.p4 */
     inout egress_headers_t hdr,
     inout Basic_egress_metadata_t Basic_md,
@@ -326,10 +326,10 @@ control Egress (
 
 Pipeline(
     BasicIngressParser(),
-    Ingress(),
+    ingress(),
     BasicIngressDeparser(),
     BasicEgressParser(),
-    Egress(),
+    egress(),
     BasicEgressDeparser()
 ) pipe;
 

@@ -1,21 +1,27 @@
 WARNING: Mac address to reach destination not found. Using broadcast.
 WARNING: Mac address to reach destination not found. Using broadcast.
-WARNING: more Mac address to reach destination not found. Using broadcast.
-modal_type:flexip, frequency:1, source_host:128, destination_host:164
+modal_type:flexip, frequency:1, source_host:200, destination_host:164
+substring F6F000C8
+substring F4000000
 substring 00000000
+substring 00000000
+substring 00000000
+substring 00000000
+substring 00000000
+substring 00000000
+substring 00000000
+substring C8000000
 substring F2000000
 substring 00000000
 substring A4000000
-src:{}, dst:{}, flexip_prefix [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [4060086272, 0, 2751463424, 0, 0, 0, 0, 0, 0, 0, 0, 0] 16810056
-01008048000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F200000000000000A4
+srcFlexIP:{}, dstFlexIP:{}, flexip_prefix F6F000C8F400000000000000000000000000000000000000000000000000000000000000C8 F200000000000000A4 152207432
+091280480000000000000000000000F6F000C8F400000000000000000000000000000000000000000000000000000000000000C8000000000000000000000000000000000000000000000000000000000000000000000000000000F200000000000000A4
 ###[ Ethernet ]### 
   dst       = ff:ff:ff:ff:ff:ff
   src       = 00:00:00:00:00:00
   type      = 0x3690
 ###[ Raw ]### 
-     load      = '\x01\x00\\x80H\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\\xf2\x00\x00\x00\x00\x00\x00\x00\\xa4'
+     load      = '\t\x12\\x80H\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\\xf6\\xf0\x00\\xc8\\xf4\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\\xc8\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\\xf2\x00\x00\x00\x00\x00\x00\x00\\xa4'
 
-sending on interface h128-eth0 form 128 to 164, model : flexip 
-['flexip', '250', '164'] 345 ['flexip', '128', '164'] 346
-flexip 128 164 flexip 128 164
-resend!
+sending on interface h200-eth0 form 200 to 164, model : flexip 
+['flexip', '128', '164'] 346 ['flexip', '128', '164'] 346
