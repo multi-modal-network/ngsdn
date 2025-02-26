@@ -7,7 +7,7 @@ services:
     privileged: true
     volumes:
       - /lib/modules:/lib/modules
-      - /home/onos/Desktop:/home/onos/Desktop
+      - /home/onos/project:/home/onos/Desktop
     environment:
       VMX: "0"
     networks:
@@ -26,7 +26,7 @@ services:
     privileged: true
     volumes:
       - /lib/modules:/lib/modules
-      - /home/onos/Desktop:/home/onos/Desktop
+      - /home/onos/project:/home/onos/Desktop
     environment:
       VMX: "1"
     networks:
@@ -45,7 +45,7 @@ services:
   #   privileged: true
   #   volumes:
   #     - /lib/modules:/lib/modules
-  #     - /home/onos/Desktop:/home/onos/Desktop
+  #     - /home/onos/project:/home/onos/Desktop
   #   environment:
   #     VMX: "2"
   #   networks:
@@ -58,24 +58,24 @@ services:
   #   working_dir: /home/onos/Desktop/ngsdn/mininet
   #   command: ["tail", "-f", "/dev/null"]
   
-  # mn-stratum3:
-  #   image: mn-stratum-ovs-scapy
-  #   container_name: mn-stratum3
-  #   privileged: true
-  #   volumes:
-  #     - /lib/modules:/lib/modules
-  #     - /home/onos/Desktop:/home/onos/Desktop
-  #   environment:
-  #     VMX: "3"
-  #   networks:
-  #     mininet-bridge:
-  #       ipv4_address: 10.1.0.5
-  #     ovs-bridge:
-  #       ipv4_address: 10.2.0.5
-  #   ports:
-  #     - "53000-53255:50000-50255"
-  #   working_dir: /home/onos/Desktop/ngsdn/mininet
-  #   command: ["tail", "-f", "/dev/null"]
+  mn-stratum3:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum3
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/project:/home/onos/Desktop
+    environment:
+      VMX: "3"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.5
+      ovs-bridge:
+        ipv4_address: 10.2.0.5
+    ports:
+      - "53000-53255:50000-50255"
+    working_dir: /home/onos/Desktop/ngsdn/mininet
+    command: ["tail", "-f", "/dev/null"]
 
   # mn-stratum4:
   #   image: mn-stratum-ovs-scapy
@@ -83,7 +83,7 @@ services:
   #   privileged: true
   #   volumes:
   #     - /lib/modules:/lib/modules
-  #     - /home/onos/Desktop:/home/onos/Desktop
+  #     - /home/onos/project:/home/onos/Desktop
   #   environment:
   #     VMX: "4"
   #   networks:
@@ -102,7 +102,7 @@ services:
   #   privileged: true
   #   volumes:
   #     - /lib/modules:/lib/modules
-  #     - /home/onos/Desktop:/home/onos/Desktop
+  #     - /home/onos/project:/home/onos/Desktop
   #   environment:
   #     VMX: "5"
   #   networks:
@@ -121,7 +121,7 @@ services:
   #   privileged: true
   #   volumes:
   #     - /lib/modules:/lib/modules
-  #     - /home/onos/Desktop:/home/onos/Desktop
+  #     - /home/onos/project:/home/onos/Desktop
   #   environment:
   #     VMX: "6"
   #   networks:
@@ -140,7 +140,7 @@ services:
   #   privileged: true
   #   volumes:
   #     - /lib/modules:/lib/modules
-  #     - /home/onos/Desktop:/home/onos/Desktop
+  #     - /home/onos/project:/home/onos/Desktop
   #   environment:
   #     VMX: "7"
   #   networks:
