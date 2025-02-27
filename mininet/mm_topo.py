@@ -87,59 +87,41 @@ def float_to_custom_bin(number):
     return decimal_representation
 
 def customFlexIP(vmx, i):
-    F0 = 2048 + vmx * 100 + i - 64
-    F1 = 202271720 + vmx * 100000 + i - 64
-    F2 = (1<<50) + vmx * 100000000 + i - 64
-    F4 = (1<<200) + vmx * 100000000000 + i - 64
-    if 65<=i<=68:
-        return "F0/{:04X}".format(F0)
-    elif 69<=i<=72:
-        return "F1/{:08X}".format(F1)
-    elif 73<=i<=76:
-        return "F2/{:016X}".format(F2)
-    elif 77<=i<=80:
-        return "F4/{:064X}".format(F4)
-    elif i==81:
-        return "F6/{:02X}/F0/{:04X}".format(i, F0)
-    elif i==82:
-        return "F6/{:02X}/F1/{:08X}".format(i, F1)
-    elif i==83:
-        return "F6/{:02X}/F2/{:016X}".format(i, F2)
-    elif i==84:
-        return "F6/{:02X}/F4/{:064X}".format(i, F4)
-    elif i==85:
-        return "F6/F0/{:04X}/F1/{:08X}".format(F0, F1)
-    elif i==86:
-        return "F6/F0/{:04X}/F2/{:016X}".format(F0, F2)
-    elif i==87:
-        return "F6/F0/{:04X}/F4/{:064X}".format(F0, F4)
-    elif i==88:
-        return "F6/F1/{:08X}/F2/{:016X}".format(F1, F2)
-    elif i==89:
-        return "F6/F1/{:08X}/F4/{:064X}".format(F1, F4)
-    elif i==90:
-        return "F6/F2/{:016X}/F4/{:064X}".format(F2, F4)
-    elif i==91:
-        return "F7/{:02X}/F0/{:04X}/F1/{:08X}".format(i, F0, F1)
-    elif i==92:
-        return "F7/{:02X}/F0/{:04X}/F2/{:016X}".format(i, F0, F2)
-    elif i==93:
-        return "F7/{:02X}/F0/{:04X}/F4/{:064X}".format(i, F0, F4)
-    elif i==94:
-        return "F7/{:02X}/F1/{:08X}/F2/{:016X}".format(i, F1, F2)
-    elif i==95:
-        return "F7/{:02X}/F1/{:08X}/F4/{:064X}".format(i, F1, F4)
-    elif i==96:
-        return "F7/{:02X}/F2/{:016X}/F4/{:064X}".format(i, F2, F4)
-    elif i==97:
-        return "F7/F0/{:04X}/F1/{:08X}/F2/{:016X}".format(F0, F1, F2)
-    elif i==98:
-        return "F7/F0/{:04X}/F1/{:08X}/F4/{:064X}".format(F0, F1, F4)
-    elif i==99:
-        return "F7/F0/{:04X}/F2/{:016X}/F4/{:064X}".format(F0, F2, F4)
-    elif i==100:
-        return "F7/F1/{:08X}/F2/{:016X}/F4/{:064X}".format(F1, F2, F4)
-    return "{:02X}".format(i)
+    F_restrained = vmx * 20 + i - 128
+    F0 = vmx*255 + i
+    F1 = vmx*255*255 + i
+    F2 = vmx*255*255*255 + i
+    F4 = vmx*255*255*255*255 + i
+    if 144<=i<152:
+        return "F0{:04X}".format(F0)
+    elif 152<=i<160:
+        return "F1{:08X}".format(F1)
+    elif 160<=i<168:
+        return "F2{:016X}".format(F2)
+    elif 168<=i<176:
+        return "F4{:064X}".format(F4)
+    elif 176<=i<184:
+        return "F6F0{:04X}F1{:08X}".format(F0, F1)
+    elif 184<=i<192:
+        return "F6F0{:04X}F2{:016X}".format(F0, F2)
+    elif 192<=i<200:
+        return "F6F0{:04X}F4{:064X}".format(F0, F4)
+    elif 200<=i<208:
+        return "F6F1{:08X}F2{:016X}".format(F1, F2)
+    elif 208<=i<216:
+        return "F6F1{:08X}F4{:064X}".format(F1, F4)
+    elif 216<=i<224:
+        return "F6F2{:016X}F4{:064X}".format(F2, F4)
+    elif 224<=i<232:
+        return "F7F0{:04X}F1{:08X}F2{:016X}".format(F0, F1, F2)
+    elif 232<=i<240:
+        return "F7F0{:04X}F1{:08X}F4{:064X}".format(F0, F1, F4)
+    elif 240<=i<248:
+        return "F7F0{:04X}F2{:016X}F4{:064X}".format(F0, F2, F4)
+    elif 248<=i<256:
+        return "F7F1{:08X}F2{:016X}F4{:064X}".format(F1, F2, F4)
+    return "{:02X}".format(F_restrained)
+
 
 class ONOSHost(Host):
     def __init__(self, name, inNamespace=True, **params):
