@@ -1,29 +1,12 @@
-WARNING: Mac address to reach destination not found. Using broadcast.
-WARNING: Mac address to reach destination not found. Using broadcast.
-modal_type:flexip, frequency:1, source_host:1000, destination_host:147
-srcFlexIP:, srcLength:, srcFormat F7F003E8F10002FAEEF400000000000000000000000000000000000000000000000000000002F411F4EE 336 2
-dstFlexIP:, dstLength:, dstFormat F00093 24 1
-flexip_prefix: 152371224
-substring F7F003E8
-substring F10002FA
-substring EEF40000
-substring 00000000
-substring 00000000
-substring 00000000
-substring 00000000
-substring 00000000
-substring 00000000
-substring 0002F411
-substring F4EE0000
-substring F0009300
-srcFlexIP:{}, dstFlexIP:{}, flexip_prefix F7F003E8F10002FAEEF400000000000000000000000000000000000000000000000000000002F411F4EE F00093 152371224
-hex_string: 09150018000000000000F7F003E8F10002FAEEF400000000000000000000000000000000000000000000000000000002F411F4EE000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F00093
+modal_type:geo, frequency:1, source_host:400, destination_host:700
+generate_geo_pkt 1 145 2 190
+1076677836
 ###[ Ethernet ]### 
-  dst       = ff:ff:ff:ff:ff:ff
-  src       = 00:00:00:00:00:00
-  type      = 0x3690
+  dst       = 02:42:0a:01:00:04
+  src       = 02:42:0a:01:00:03
+  type      = 0x8947
 ###[ Raw ]### 
-     load      = '\t\x15\x00\x18\x00\x00\x00\x00\x00\x00\\xf7\\xf0\x03\\xe8\\xf1\x00\x02\\xfa\\xee\\xf4\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\\xf4\x11\\xf4\\xee\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\\xf0\x00\\x93'
+     load      = '\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x7f@,\\xcc\\xcc\x00\x00\x00\x00\x00\x00\x00\x00'
 
-sending on interface h1000-eth0 form 1000 to 147, model : flexip 
+sending on interface h400-eth0 form 400 to 700, model : geo 
 ['flexip', '128', '164'] 346 ['flexip', '128', '164'] 346
