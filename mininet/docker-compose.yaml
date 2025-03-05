@@ -19,44 +19,44 @@ services:
   #     - "50000-50255:50000-50255"
   #   working_dir: /home/onos/Desktop/ngsdn/mininet
   #   command: ["tail", "-f", "/dev/null"]
-  
-  mn-stratum1:
-    image: mn-stratum-ovs-scapy
-    container_name: mn-stratum1
-    privileged: true
-    volumes:
-      - /lib/modules:/lib/modules
-      - /home/onos/project:/home/onos/Desktop
-    environment:
-      VMX: "1"
-    networks:
-      mininet-bridge:
-        ipv4_address: 10.1.0.3
-      ovs-bridge:
-        ipv4_address: 10.2.0.3
-    ports:
-      - "51000-51255:50000-50255"
-    working_dir: /home/onos/Desktop/ngsdn/mininet
-    command: ["tail", "-f", "/dev/null"]
-
-  # mn-stratum2:
+ 
+  # mn-stratum1:
   #   image: mn-stratum-ovs-scapy
-  #   container_name: mn-stratum2
+  #   container_name: mn-stratum1
   #   privileged: true
   #   volumes:
   #     - /lib/modules:/lib/modules
   #     - /home/onos/project:/home/onos/Desktop
   #   environment:
-  #     VMX: "2"
+  #     VMX: "1"
   #   networks:
   #     mininet-bridge:
-  #       ipv4_address: 10.1.0.4
+  #       ipv4_address: 10.1.0.3
   #     ovs-bridge:
-  #       ipv4_address: 10.2.0.4
+  #       ipv4_address: 10.2.0.3
   #   ports:
-  #     - "52000-52255:50000-50255"
+  #     - "51000-51255:50000-50255"
   #   working_dir: /home/onos/Desktop/ngsdn/mininet
   #   command: ["tail", "-f", "/dev/null"]
+
+  mn-stratum2:
+    image: mn-stratum-ovs-scapy
+    container_name: mn-stratum2
+    privileged: true
+    volumes:
+      - /lib/modules:/lib/modules
+      - /home/onos/project:/home/onos/Desktop
+    environment:
+      VMX: "2"
+    networks:
+      mininet-bridge:
+        ipv4_address: 10.1.0.4
+      ovs-bridge:
+        ipv4_address: 10.2.0.4
+    ports:
+      - "52000-52255:50000-50255"
+    working_dir: /home/onos/Desktop/ngsdn/mininet
+    command: ["tail", "-f", "/dev/null"]
   
   mn-stratum3:
     image: mn-stratum-ovs-scapy
@@ -153,22 +153,22 @@ services:
   #   working_dir: /home/onos/Desktop/ngsdn/mininet
   #   command: ["tail", "-f", "/dev/null"]
   
-  mn-satellite:
-    image: mn-stratum-ovs-scapy
-    container_name: mn-satellite
-    privileged: true
-    volumes:
-      - /lib/modules:/lib/modules
-      - /home/onos/project:/home/onos/Desktop
-    networks:
-      mininet-bridge:
-        ipv4_address: 10.1.0.10
-      ovs-bridge:
-        ipv4_address: 10.2.0.10
-    ports:
-      - "49995-49997:50000-50002"
-    working_dir: /home/onos/Desktop/ngsdn/mininet
-    command: ["tail", "-f", "/dev/null"]
+  # mn-satellite:
+  #   image: mn-stratum-ovs-scapy
+  #   container_name: mn-satellite
+  #   privileged: true
+  #   volumes:
+  #     - /lib/modules:/lib/modules
+  #     - /home/onos/project:/home/onos/Desktop
+  #   networks:
+  #     mininet-bridge:
+  #       ipv4_address: 10.1.0.10
+  #     ovs-bridge:
+  #       ipv4_address: 10.2.0.10
+  #   ports:
+  #     - "49995-49997:50000-50002"
+  #   working_dir: /home/onos/Desktop/ngsdn/mininet
+  #   command: ["tail", "-f", "/dev/null"]
 
 networks:
   mininet-bridge:

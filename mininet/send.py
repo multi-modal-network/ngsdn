@@ -212,7 +212,7 @@ def generate_flexip_pkt(ethertype, srcVmx, srcId, dstVmx, dstId):
     src += [0] * (12 - len(src))
     dst += [0] * (12 - len(dst))
     print("srcFlexIP:{}, dstFlexIP:{}, flexip_prefix", srcFlexIP, dstFlexIP, flexip_prefix)
-    pkt = Ether(type=ethertype)
+    pkt = Ether(type=ethertype, src=getMacByVmx(srcVmx), dst=getMacByVmx(dstVmx))
     # pkt = pkt / Raw(load=struct.pack("!LLLLLLLLLLLLLLLLLLLLLLLLL", flexip_prefix, *src[:12], *dst[:12]))
     hex_string = hex(flexip_prefix)[2:10].zfill(8) + srcFlexIP.zfill(96) + dstFlexIP.zfill(96)
     print("hex_string:", hex_string)
