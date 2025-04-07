@@ -242,9 +242,7 @@ control ingress(inout headers_t hdr,
             // Exit the pipeline here, no need to go through other tables.
             exit;
         }
-        if (hdr.ethernet.ether_type == ETHERTYPE_NDN) {
-            routing_ndn_table.apply();
-        } else if (hdr.ethernet.ether_type == ETHERTYPE_FLEXIP) {
+        if (hdr.ethernet.ether_type == ETHERTYPE_FLEXIP) {
             routing_flexip_table.apply(); 
         }
     }

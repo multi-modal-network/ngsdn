@@ -4,8 +4,7 @@
 #ifndef __PARSER__
 #define __PARSER__
 
-#include "../../shared/header.p4"
-#include "../../shared/define.p4"
+#include "headers.p4"
 
 parser BasicIngressParser (packet_in  pkt,
     /* Basic.p4 */

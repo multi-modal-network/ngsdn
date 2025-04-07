@@ -166,7 +166,7 @@ control ingress(inout headers_t hdr,
         key = {
             hdr.ethernet.ether_type: exact;
             hdr.mf.src_guid: exact;
-            hdr.mf.dest_guid : exact;
+            hdr.mf.dst_guid : exact;
         }
 
         actions = {

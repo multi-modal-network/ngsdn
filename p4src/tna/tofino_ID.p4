@@ -1,169 +1,38 @@
-/*******************************************************************************
- * BAREFOOT NETWORKS CONFIDENTIAL & PROPRIETARY
- *
- * Copyright (c) 2019-present Barefoot Networks, Inc.
- *
- * All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Barefoot Networks, Inc. and its suppliers, if any. The intellectual and
- * technical concepts contained herein are proprietary to Barefoot Networks, Inc.
- * and its suppliers and may be covered by U.S. and Foreign Patents, patents in
- * process, and are protected by trade secret or copyright law.  Dissemination of
- * this information or reproduction of this material is strictly forbidden unless
- * prior written permission is obtained from Barefoot Networks, Inc.
- *
- * No warranty, explicit or implicit is provided, unless granted under a written
- * agreement with Barefoot Networks, Inc.
- *
- ******************************************************************************/
+// Copyright 2020-present Open Networking Foundation
+// SPDX-License-Identifier: Apache-2.0
 
 #include <core.p4>
-#if __TARGET_TOFINO__ == 2
-#include <t2na.p4>
-#else
 #include <tna.p4>
-#endif
 
-#include "common/headers.p4"
-#include "common/util.p4"
+#include "./include/defines.p4"
+#include "./include/size.p4"
+#include "./include/headers.p4"
+#include "./include/parsers.p4"
+#include "./include/control/packetio.p4"
+#include "./include/control/table0.p4"
 
+control ingress (
+    /* Basic.p4 */
+    inout ingress_headers_t hdr,
+    inout Basic_ingress_metadata_t Basic_md,
+    /* TNA */
+    in    ingress_intrinsic_metadata_t               ig_intr_md,
+    in    ingress_intrinsic_metadata_from_parser_t   ig_prsr_md,
+    inout ingress_intrinsic_metadata_for_deparser_t  ig_dprsr_md,
+    inout ingress_intrinsic_metadata_for_tm_t        ig_tm_md) {
 
-struct metadata_t {
-    bit<1>   l3;    // Set if routed
-    bit<1>   ndn;    // Set if routed
-}
-
-// ---------------------------------------------------------------------------
-// Ingress parser
-// ---------------------------------------------------------------------------
-parser SwitchIngressParser(
-        packet_in pkt,
-        out header_t hdr,
-        out metadata_t ig_md,
-        out ingress_intrinsic_metadata_t ig_intr_md) {
-
-    TofinoIngressParser() tofino_parser;
-
-    state start {
-        tofino_parser.apply(pkt, ig_intr_md);
-        transition parse_ethernet;
-    }
-
-    state parse_ethernet {
-        pkt.extract(hdr.ethernet);
-        transition select(hdr.ethernet.ether_type) {
-            ETHERTYPE_IPV4 : parse_ipv4;
-            ETHERTYPE_IPV6 : parse_ipv6;
-            ETHERTYPE_GEO  : parse_geo;
-            ETHERTYPE_MF   : parse_mf;
-            ETHERTYPE_NDN  : parse_ndn;
-            ETHERTYPE_ID   : parse_id;
-            default : accept;
-        }
-
-    }
-
-    state parse_ipv4 {
-        pkt.extract(hdr.ipv4);
-        transition accept;
-    }
-
-    state parse_ndn {
-    transition accept;
-    }
-
-    state parse_id {
-        pkt.extract(hdr.id);
-        transition accept;
-    }
-
-    state parse_ipv6 {
-        pkt.extract(hdr.ipv6);
-        transition accept;
-    }
-
-    state parse_mf {
-        pkt.extract(hdr.mf_guid);
-        transition accept;
-    }
-
-    state parse_geo {
-        pkt.extract(hdr.geo);
-        transition select(hdr.geo.ht) { //
-            TYPE_geo_beacon: parse_beacon; //0x01
-            TYPE_geo_gbc: parse_gbc;       //0x04
-            default: accept;
-        }
-    }
-
-    
-    state parse_beacon{
-        pkt.extract(hdr.beacon);
-        transition accept;
-    }
-
-    state parse_gbc{
-        pkt.extract(hdr.gbc);
-        transition accept;
-    }
-    
- 
-
-}
-
-// ---------------------------------------------------------------------------
-// Ingress Deparser
-// ---------------------------------------------------------------------------
-control SwitchIngressDeparser(
-        packet_out pkt,
-        inout header_t hdr,
-        in metadata_t ig_md,
-        in ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md) {
-
-    Checksum() ipv4_checksum;
-
-    apply {
-        hdr.ipv4.hdr_checksum = ipv4_checksum.update({
-            hdr.ipv4.version,
-            hdr.ipv4.ihl,
-            hdr.ipv4.diffserv,
-            hdr.ipv4.total_len,
-            hdr.ipv4.identification,
-            hdr.ipv4.flags,
-            hdr.ipv4.frag_offset,
-            hdr.ipv4.ttl,
-            hdr.ipv4.protocol,
-            hdr.ipv4.srcAddr,
-            hdr.ipv4.dstAddr});
-
-        pkt.emit(hdr);
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Switch Ingress MAU
-// ---------------------------------------------------------------------------
-control ingress(
-        inout header_t hdr,
-        inout metadata_t ig_md,
-        in ingress_intrinsic_metadata_t ig_intr_md,
-        in ingress_intrinsic_metadata_from_parser_t ig_prsr_md,
-        inout ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md,
-        inout ingress_intrinsic_metadata_for_tm_t ig_tm_md) {
-
-    // Create direct counters
-    DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) l2_counter;
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) id_counter;
-    // Create indirect counter
-    // Counter<bit<32>, ether_type_t>(
-    //     8, CounterType_t.PACKETS_AND_BYTES) indirect_counter;
+    DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) l2_counter;
 
     action drop() {
         ig_dprsr_md.drop_ctl = 0x1; // Drop packet.
     }
 
-
+    action to_cpu() {
+        ig_tm_md.ucast_egress_port = CPU_PORT;
+        hdr.packet_in.setValid();
+        hdr.packet_in.ingress_port = (BasicPortId_t)ig_intr_md.ingress_port;
+    }
 
     action icmp_switch(PortId_t port) {
         l2_counter.count();
@@ -175,13 +44,10 @@ control ingress(
         ig_tm_md.ucast_egress_port = port;
     }
 
-
     action route_l3() {
         l2_counter.count();
-        ig_md.l3 = 1;
+        Basic_md.l3 = 1;
     }
-
-
 
     table ing_dmac {
         key = {
@@ -197,46 +63,67 @@ control ingress(
         }
         size = 24;
         const default_action = route_l3;
-        // Associate this table with a direct counter
         counters = l2_counter;
     }
-
 
     action set_next_id_hop(PortId_t dst_port){
         ig_tm_md.ucast_egress_port = dst_port;
         id_counter.count();
     }
+    action id_to_cpu(){
+        ig_tm_md.ucast_egress_port = CPU_PORT;
+        hdr.packet_in.setValid();
+        hdr.packet_in.ingress_port = (BasicPortId_t)ig_intr_md.ingress_port;
+        id_counter.count();
+    }
     table routing_id_table {
         key = {
-            hdr.id.dstIdentity : exact;
+            hdr.ethernet.ether_type: exact;
+            hdr.id.src_identity: exact;
+            hdr.id.dst_identity: exact;
         }
         actions = {
             set_next_id_hop;
+            id_to_cpu;
         }
+        default_action = id_to_cpu;
         counters = id_counter;
         size = 1024;
     }
 
+    PacketIoIngress() pkt_io;
+    Table0() table0;
     apply {
-            ing_dmac.apply();
-            if (ig_md.l3 == 1)
-            {
-                if(hdr.ethernet.ether_type == ETHERTYPE_ID) {
-                    routing_id_table.apply();
-                }
-            }
-            
-
-        // No need for egress processing, skip it and use empty controls for egress.
+        if(hdr.ethernet.ether_type == ETHERTYPE_ID){
+            routing_id_table.apply();
+        }
+        pkt_io.apply(hdr, Basic_md, ig_intr_md, ig_tm_md, ig_dprsr_md);
+        table0.apply(hdr, Basic_md, ig_intr_md, ig_tm_md, ig_dprsr_md);
         ig_tm_md.bypass_egress = 1w1;
     }
 }
 
-Pipeline(SwitchIngressParser(),
-         ingress(),
-         SwitchIngressDeparser(),
-         EmptyEgressParser(),
-         EmptyEgress(),
-         EmptyEgressDeparser()) pipe;
+control egress (
+    /* Basic.p4 */
+    inout egress_headers_t hdr,
+    inout Basic_egress_metadata_t Basic_md,
+    /* TNA */
+    in    egress_intrinsic_metadata_t                  eg_intr_md,
+    in    egress_intrinsic_metadata_from_parser_t      eg_prsr_md,
+    inout egress_intrinsic_metadata_for_deparser_t     eg_dprsr_md,
+    inout egress_intrinsic_metadata_for_output_port_t  eg_oport_md) {
+
+    apply {
+    }
+}
+
+Pipeline(
+    BasicIngressParser(),
+    ingress(),
+    BasicIngressDeparser(),
+    BasicEgressParser(),
+    egress(),
+    BasicEgressDeparser()
+) pipe;
 
 Switch(pipe) main;
