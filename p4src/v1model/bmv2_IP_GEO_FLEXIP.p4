@@ -147,8 +147,8 @@ control ingress(inout headers_t hdr,
     table routing_geo_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.gbc.geoAreaPosLat: exact;
-            hdr.gbc.geoAreaPosLon: exact;
+            hdr.gbc.geo_area_pos_lat: exact;
+            hdr.gbc.geo_area_pos_lon: exact;
             hdr.gbc.disa: exact;
             hdr.gbc.disb: exact;
         }

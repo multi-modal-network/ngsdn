@@ -145,8 +145,8 @@ control ingress(inout headers_t hdr,
     table routing_id_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.id.srcIdentity: exact;
-            hdr.id.dstIdentity: exact;
+            hdr.id.src_identity: exact;
+            hdr.id.dst_identity: exact;
         }
         actions = {
             set_next_id_hop;
