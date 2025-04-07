@@ -157,14 +157,6 @@ control ingress(inout headers_t hdr,
         counters = direct_counter(CounterType.packets_and_bytes);
     }
 
-    // --- my_station_table ----------------------------------------------------
-
-    // Matches on all possible my_station MAC addresses associated with this
-    // switch. This table defines only one action that does nothing to the
-    // packet. Later in the apply block, we define logic such that packets are
-    // routed if and only if this table is "hit", i.e. a matching entry is found
-    // for the given packet.
-
 
     // IP模态
     // --- routing_v6_table ----------------------------------------------------
@@ -218,16 +210,7 @@ control ingress(inout headers_t hdr,
         @name("routing_v4_table_counter")
         counters = direct_counter(CounterType.packets_and_bytes);
     }
-    // recirculate
-    action recirculate(bit<7> recirc_port) {
-        ig_intr_tm_md.ucast_egress_port[8:7] = ig_intr_md.ingress_port[8:7];
-        ig_intr_tm_md.ucast_egress_port[6:0] = recirc_port;
-        hdr.recirc.setValid();
-        hdr.recirc.class_result = ig_md.finres;
-        hdr.recirc.etherType = ig_md.tmp_etherType;
-        hdr.ethernet.etherType = TYPE_RECIRC;
-        ig_intr_dprsr_md.digest_type = 1;
-    }
+
     // *** ACL
     //
     // Provides ways to override a previous forwarding decision, for example
@@ -319,14 +302,7 @@ control ingress(inout headers_t hdr,
             routing_v6_table.apply();
         } else if (hdr.ipv4.isValid()) {
             routing_v4_table.apply();
-        } else if (!l2_exact_table.apply().hit) {
-        // L2 bridging. Apply the exact table first (for unicast entries)..
-            // If an entry is NOT found, apply the ternary one in case this
-            // is a multicast/broadcast NDP NS packet for another host
-            // attached to this switch.
-            l2_ternary_table.apply();
         }
-        acl_table.apply();
     }
 }
 

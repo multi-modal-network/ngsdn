@@ -228,6 +228,29 @@ control ingress(inout headers_t hdr,
         counters = direct_counter(CounterType.packets_and_bytes);
     }
 
+    // --- routing_flexip_table -----------------------------------------------------
+    // FlexIP模态
+    action set_next_flexip_hop(port_num_t dst_port) {
+        standard_metadata.egress_spec = dst_port;
+    }
+
+    table routing_flexip_table {
+        key = {
+            hdr.ethernet.ether_type: exact;
+            hdr.flexip.src_format: exact;
+            hdr.flexip.dst_format: exact;
+            hdr.flexip.src_addr: exact;
+            hdr.flexip.dst_addr: exact;
+        }
+        actions = {
+            set_next_flexip_hop;
+            to_cpu;
+        }
+        default_action = to_cpu;
+        @name("routing_flexip_table_counter")
+        counters = direct_counter(CounterType.packets_and_bytes);
+    }
+
     // *** ACL
     //
     // Provides ways to override a previous forwarding decision, for example
@@ -319,6 +342,8 @@ control ingress(inout headers_t hdr,
             routing_mf_table.apply();
         } else if (hdr.ethernet.ether_type == ETHERTYPE_NDN) {
             routing_ndn_table.apply();
+        } else if (hdr.ethernet.ether_type == ETHERTYPE_FLEXIP) {
+            routing_flexip_table.apply(); 
         }
     }
 }

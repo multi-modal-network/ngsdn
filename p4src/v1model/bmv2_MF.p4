@@ -242,14 +242,7 @@ control ingress(inout headers_t hdr,
         }
         if (hdr.ethernet.ether_type == ETHERTYPE_MF && hdr.mf.isValid()) {
             routing_mf_table.apply();
-        } else if (!l2_exact_table.apply().hit) {
-        // L2 bridging. Apply the exact table first (for unicast entries)..
-            // If an entry is NOT found, apply the ternary one in case this
-            // is a multicast/broadcast NDP NS packet for another host
-            // attached to this switch.
-            l2_ternary_table.apply();
         }
-        acl_table.apply();
     }
 }
 

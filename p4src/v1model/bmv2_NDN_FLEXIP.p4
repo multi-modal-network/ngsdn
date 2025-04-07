@@ -136,75 +136,6 @@ control ingress(inout headers_t hdr,
         hdr.packet_in.setValid();
     }
 
-    // --- routing_id_table ----------------------------------------------------
-    //  身份模态
-    action set_next_id_hop(port_num_t dst_port){
-        standard_metadata.egress_spec = dst_port;
-    }
-
-    table routing_id_table {
-        key = {
-            hdr.ethernet.ether_type: exact;
-            hdr.id.srcIdentity: exact;
-            hdr.id.dstIdentity: exact;
-        }
-        actions = {
-            set_next_id_hop;
-            to_cpu;
-        }
-        default_action = to_cpu;
-        @name("routing_id_table_counter")
-        counters = direct_counter(CounterType.packets_and_bytes);
-    }
-
-    // --- routing_mf_table -----------------------------------------------------
-    // mf模态
-    action set_next_mf_hop(port_num_t dst_port) {
-        standard_metadata.egress_spec = dst_port;
-    }
-    table routing_mf_table {
-        key = {
-            hdr.ethernet.ether_type: exact;
-            hdr.mf.src_guid: exact;
-            hdr.mf.dest_guid : exact;
-        }
-
-        actions = {
-            set_next_mf_hop;
-            to_cpu;
-        }
-        default_action = to_cpu;
-        @name("routing_mf_table_counter")
-        counters = direct_counter(CounterType.packets_and_bytes);
-    }
-
-    // --- routing_geo_table -----------------------------------------------------
-    // 地理模态
-    action geo_ucast_route(port_num_t dst_port) {
-        standard_metadata.egress_spec = dst_port;
-    }
-    action geo_mcast_route(mcast_group_id_t mgid1) {
-        standard_metadata.mcast_grp = mgid1;
-    }
-    table routing_geo_table {
-        key = {
-            hdr.ethernet.ether_type: exact;
-            hdr.gbc.geoAreaPosLat: exact;
-            hdr.gbc.geoAreaPosLon: exact;
-            hdr.gbc.disa: exact;
-            hdr.gbc.disb: exact;
-        }
-
-        actions = {
-            geo_ucast_route;
-            geo_mcast_route;
-            to_cpu;
-        }
-        default_action = to_cpu;
-        @name("routing_geo_table_counter")
-        counters = direct_counter(CounterType.packets_and_bytes);
-    }
-
     // --- routing_ndn_table ------------------------------------------------------
     // ndn模态
     action set_next_ndn_hop(port_num_t dst_port) {
@@ -225,6 +156,29 @@ control ingress(inout headers_t hdr,
         }
         default_action = to_cpu;
         @name("routing_ndn_table_counter")
+        counters = direct_counter(CounterType.packets_and_bytes);
+    }
+
+    // --- routing_flexip_table -----------------------------------------------------
+    // FlexIP模态
+    action set_next_flexip_hop(port_num_t dst_port) {
+        standard_metadata.egress_spec = dst_port;
+    }
+
+    table routing_flexip_table {
+        key = {
+            hdr.ethernet.ether_type: exact;
+            hdr.flexip.src_format: exact;
+            hdr.flexip.dst_format: exact;
+            hdr.flexip.src_addr: exact;
+            hdr.flexip.dst_addr: exact;
+        }
+        actions = {
+            set_next_flexip_hop;
+            to_cpu;
+        }
+        default_action = to_cpu;
+        @name("routing_flexip_table_counter")
         counters = direct_counter(CounterType.packets_and_bytes);
     }
 
@@ -311,14 +265,10 @@ control ingress(inout headers_t hdr,
             // Exit the pipeline here, no need to go through other tables.
             exit;
         }
-        if (hdr.ethernet.ether_type == ETHERTYPE_ID && hdr.id.isValid()) {
-            routing_id_table.apply();
-        } else if (hdr.ethernet.ether_type == ETHERTYPE_GEO && hdr.geo.isValid()) {
-            routing_geo_table.apply();
-        } else if (hdr.ethernet.ether_type == ETHERTYPE_MF && hdr.mf.isValid()) {
-            routing_mf_table.apply();
-        } else if (hdr.ethernet.ether_type == ETHERTYPE_NDN) {
+        if (hdr.ethernet.ether_type == ETHERTYPE_NDN) {
             routing_ndn_table.apply();
+        } else if (hdr.ethernet.ether_type == ETHERTYPE_FLEXIP) {
+            routing_flexip_table.apply(); 
         }
     }
 }

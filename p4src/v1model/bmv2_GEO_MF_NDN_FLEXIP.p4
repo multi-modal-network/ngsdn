@@ -32,7 +32,7 @@
 // INGRESS PIPELINE
 //------------------------------------------------------------------------------
 
-control ingress(inout headers_t hdr,
+control BasicIngress(inout headers_t hdr,
                 inout local_metadata_t local_metadata,
                 inout standard_metadata_t standard_metadata) {
     
@@ -136,27 +136,6 @@ control ingress(inout headers_t hdr,
         hdr.packet_in.setValid();
     }
 
-    // --- routing_id_table ----------------------------------------------------
-    //  身份模态
-    action set_next_id_hop(port_num_t dst_port){
-        standard_metadata.egress_spec = dst_port;
-    }
-
-    table routing_id_table {
-        key = {
-            hdr.ethernet.ether_type: exact;
-            hdr.id.srcIdentity: exact;
-            hdr.id.dstIdentity: exact;
-        }
-        actions = {
-            set_next_id_hop;
-            to_cpu;
-        }
-        default_action = to_cpu;
-        @name("routing_id_table_counter")
-        counters = direct_counter(CounterType.packets_and_bytes);
-    }
-
     // --- routing_mf_table -----------------------------------------------------
     // mf模态
     action set_next_mf_hop(port_num_t dst_port) {
@@ -214,8 +193,8 @@ control ingress(inout headers_t hdr,
         key = {
             hdr.ethernet.ether_type: exact;
             hdr.ndn.ndn_prefix.code: exact;
-            hdr.ndn.name_tlv.components[0].value: exact;
-            hdr.ndn.name_tlv.components[1].value: exact;
+            hdr.ndn.name_tlv.components[0].value: exact;    // 目的
+            hdr.ndn.name_tlv.components[1].value: exact;    // 源
             hdr.ndn.content_tlv.value: exact;
         }
 
@@ -225,6 +204,29 @@ control ingress(inout headers_t hdr,
         }
         default_action = to_cpu;
         @name("routing_ndn_table_counter")
+        counters = direct_counter(CounterType.packets_and_bytes);
+    }
+
+    // --- routing_flexip_table -----------------------------------------------------
+    // FlexIP模态
+    action set_next_flexip_hop(port_num_t dst_port) {
+        standard_metadata.egress_spec = dst_port;
+    }
+
+    table routing_flexip_table {
+        key = {
+            hdr.ethernet.ether_type: exact;
+            hdr.flexip.src_format: exact;
+            hdr.flexip.dst_format: exact;
+            hdr.flexip.src_addr: exact;
+            hdr.flexip.dst_addr: exact;
+        }
+        actions = {
+            set_next_flexip_hop;
+            to_cpu;
+        }
+        default_action = to_cpu;
+        @name("routing_flexip_table_counter")
         counters = direct_counter(CounterType.packets_and_bytes);
     }
 
@@ -311,14 +313,14 @@ control ingress(inout headers_t hdr,
             // Exit the pipeline here, no need to go through other tables.
             exit;
         }
-        if (hdr.ethernet.ether_type == ETHERTYPE_ID && hdr.id.isValid()) {
-            routing_id_table.apply();
-        } else if (hdr.ethernet.ether_type == ETHERTYPE_GEO && hdr.geo.isValid()) {
+        if (hdr.ethernet.ether_type == ETHERTYPE_GEO && hdr.geo.isValid()) {
             routing_geo_table.apply();
         } else if (hdr.ethernet.ether_type == ETHERTYPE_MF && hdr.mf.isValid()) {
             routing_mf_table.apply();
         } else if (hdr.ethernet.ether_type == ETHERTYPE_NDN) {
             routing_ndn_table.apply();
+        } else if (hdr.ethernet.ether_type == ETHERTYPE_FLEXIP) {
+            routing_flexip_table.apply(); 
         }
     }
 }
@@ -344,7 +346,7 @@ control egress(inout headers_t hdr,
 
 V1Switch(parser_impl(),
          verify_checksum_control(),
-         ingress(),
+         BasicIngress(),
          egress(),
          compute_checksum_control(),
          deparser()) main;

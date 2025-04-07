@@ -114,7 +114,7 @@ p4-build-all:
 	$(MAKE) p4-build-single P4_FILE=bmv2_GEO
 	$(MAKE) p4-build-single P4_FILE=bmv2_MF
 	$(MAKE) p4-build-single P4_FILE=bmv2_NDN
-  # $(MAKE) p4-build-single P4_FILE=bmv2_IP_ID
+    $(MAKE) p4-build-single P4_FILE=bmv2_IP_ID
 	$(MAKE) p4-build-single P4_FILE=bmv2_IP_GEO
 	$(MAKE) p4-build-single P4_FILE=bmv2_IP_MF
 	$(MAKE) p4-build-single P4_FILE=bmv2_IP_NDN
@@ -140,6 +140,38 @@ p4-build-all:
 	$(MAKE) p4-build-single P4_FILE=bmv2_IP_GEO_MF_NDN
 	$(MAKE) p4-build-single P4_FILE=bmv2_ID_GEO_MF_NDN
 	$(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_GEO_MF_NDN
+	$(MAKE) p4-build-single P4_FILE=bmv2_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_ID_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_GEO_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_MF_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_NDN_FLEXIP
+    $(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_GEO_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_MF_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_ID_GEO_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_ID_MF_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_ID_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_GEO_MF_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_GEO_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_MF_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_GEO_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_MF_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_GEO_MF_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_GEO_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_MF_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_ID_GEO_MF_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_ID_GEO_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_ID_MF_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_GEO_MF_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_GEO_MF_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_GEO_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_MF_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_GEO_MF_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_ID_GEO_MF_NDN_FLEXIP
+	$(MAKE) p4-build-single P4_FILE=bmv2_IP_ID_GEO_MF_NDN_FLEXIP
 
 p4-test:
 	@cd ptf && ./run_tests $(TEST)

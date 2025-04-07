@@ -205,26 +205,80 @@ control ingress(inout headers_t hdr,
         counters = direct_counter(CounterType.packets_and_bytes);
     }
 
-    // --- routing_ndn_table ------------------------------------------------------
-    // ndn模态
-    action set_next_ndn_hop(port_num_t dst_port) {
+
+    // IP模态
+    // --- routing_v6_table ----------------------------------------------------
+
+    // To implement ECMP, we use Action Selectors, a v1model-specific construct.
+    // A P4Runtime controller, can use action selectors to associate a group of
+    // actions to one table entry. The speficic action in the group will be
+    // selected by perfoming a hash function over a pre-determined set of header
+    // fields. Here we instantiate an action selector named "ecmp_selector" that
+    // uses crc16 as the hash function, can hold up to 1024 entries (distinct
+    // action specifications), and produces a selector key of size 16 bits.
+
+    action_selector(HashAlgorithm.crc16, 32w1024, 32w16) ecmp_selector;
+
+    action set_next_v6_hop(port_num_t dst_port) {
         standard_metadata.egress_spec = dst_port;
     }
-    table routing_ndn_table {
+
+    // Look for the "implementation" property in the table definition.
+    table routing_v6_table {
+      key = {
+          hdr.ethernet.ether_type: exact;
+          hdr.ipv6.src_addr: exact;
+          hdr.ipv6.dst_addr: exact;
+      }
+      actions = {
+          set_next_v6_hop;
+          to_cpu;
+      }
+      default_action = to_cpu;
+      implementation = ecmp_selector;
+      @name("routing_v6_table_counter")
+      counters = direct_counter(CounterType.packets_and_bytes);
+    }
+
+    action set_next_v4_hop(port_num_t dst_port) {
+        standard_metadata.egress_spec = dst_port;
+    }
+    
+    table routing_v4_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.ndn.ndn_prefix.code: exact;
-            hdr.ndn.name_tlv.components[0].value: exact;
-            hdr.ndn.name_tlv.components[1].value: exact;
-            hdr.ndn.content_tlv.value: exact;
+            hdr.ipv4.srcAddr: exact;
+            hdr.ipv4.dstAddr: exact;
         }
-
         actions = {
-            set_next_ndn_hop;
+            set_next_v4_hop;
             to_cpu;
         }
         default_action = to_cpu;
-        @name("routing_ndn_table_counter")
+        @name("routing_v4_table_counter")
+        counters = direct_counter(CounterType.packets_and_bytes);
+    }
+
+    // --- routing_flexip_table -----------------------------------------------------
+    // FlexIP模态
+    action set_next_flexip_hop(port_num_t dst_port) {
+        standard_metadata.egress_spec = dst_port;
+    }
+
+    table routing_flexip_table {
+        key = {
+            hdr.ethernet.ether_type: exact;
+            hdr.flexip.src_format: exact;
+            hdr.flexip.dst_format: exact;
+            hdr.flexip.src_addr: exact;
+            hdr.flexip.dst_addr: exact;
+        }
+        actions = {
+            set_next_flexip_hop;
+            to_cpu;
+        }
+        default_action = to_cpu;
+        @name("routing_flexip_table_counter")
         counters = direct_counter(CounterType.packets_and_bytes);
     }
 
@@ -317,8 +371,14 @@ control ingress(inout headers_t hdr,
             routing_geo_table.apply();
         } else if (hdr.ethernet.ether_type == ETHERTYPE_MF && hdr.mf.isValid()) {
             routing_mf_table.apply();
-        } else if (hdr.ethernet.ether_type == ETHERTYPE_NDN) {
-            routing_ndn_table.apply();
+        } else if (hdr.ethernet.ether_type == ETHERTYPE_FLEXIP) {
+            routing_flexip_table.apply(); 
+        } else if (hdr.ipv6.isValid()) {
+            // Apply the L3 routing table to IPv6 packets, only if the
+        // destination MAC is found in the my_station_table.
+            routing_v6_table.apply();
+        } else if (hdr.ipv4.isValid()) {
+            routing_v4_table.apply();
         }
     }
 }

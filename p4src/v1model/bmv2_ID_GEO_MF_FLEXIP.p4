@@ -205,26 +205,26 @@ control ingress(inout headers_t hdr,
         counters = direct_counter(CounterType.packets_and_bytes);
     }
 
-    // --- routing_ndn_table ------------------------------------------------------
-    // ndn模态
-    action set_next_ndn_hop(port_num_t dst_port) {
+    // --- routing_flexip_table -----------------------------------------------------
+    // FlexIP模态
+    action set_next_flexip_hop(port_num_t dst_port) {
         standard_metadata.egress_spec = dst_port;
     }
-    table routing_ndn_table {
+
+    table routing_flexip_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.ndn.ndn_prefix.code: exact;
-            hdr.ndn.name_tlv.components[0].value: exact;
-            hdr.ndn.name_tlv.components[1].value: exact;
-            hdr.ndn.content_tlv.value: exact;
+            hdr.flexip.src_format: exact;
+            hdr.flexip.dst_format: exact;
+            hdr.flexip.src_addr: exact;
+            hdr.flexip.dst_addr: exact;
         }
-
         actions = {
-            set_next_ndn_hop;
+            set_next_flexip_hop;
             to_cpu;
         }
         default_action = to_cpu;
-        @name("routing_ndn_table_counter")
+        @name("routing_flexip_table_counter")
         counters = direct_counter(CounterType.packets_and_bytes);
     }
 
@@ -317,8 +317,8 @@ control ingress(inout headers_t hdr,
             routing_geo_table.apply();
         } else if (hdr.ethernet.ether_type == ETHERTYPE_MF && hdr.mf.isValid()) {
             routing_mf_table.apply();
-        } else if (hdr.ethernet.ether_type == ETHERTYPE_NDN) {
-            routing_ndn_table.apply();
+        } else if (hdr.ethernet.ether_type == ETHERTYPE_FLEXIP) {
+            routing_flexip_table.apply(); 
         }
     }
 }
