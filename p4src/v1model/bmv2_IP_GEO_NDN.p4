@@ -229,8 +229,8 @@ control ingress(inout headers_t hdr,
     table routing_v4_table {
         key = {
             hdr.ethernet.ether_type: exact;
-            hdr.ipv4.srcAddr: exact;
-            hdr.ipv4.dstAddr: exact;
+            hdr.ipv4.src_addr: exact;
+            hdr.ipv4.dst_addr: exact;
         }
         actions = {
             set_next_v4_hop;
